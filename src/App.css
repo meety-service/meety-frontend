@@ -1,15 +1,21 @@
 .nav-menu {
-  background-color: #dadada;
-  width: 50%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 0;
   right: -100%; /* 오른쪽으로 숨겨짐 */
+  transition: 300ms;
 }
 
 .nav-menu.active {
   right: 0; /* 활성화되면 오른쪽에서 슬라이드하여 나타남 */
   transition: 300ms;
+}
+
+:root {
+  --vh: 100%;
+}
+
+.nav_top_padding {
+  padding-top: 60px;
+}
+
+.mobile_h_fit {
+  height: calc(var(--vh, 1vh) * 100);
 }
