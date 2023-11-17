@@ -1,11 +1,13 @@
 import React from 'react'
+import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { MainPage, LoginPage, MeetingCreatePage, MeetingFillPage, MeetingViewPage, VoteCreatePage, VoteFillPage, VoteViewPage, MeetingConfirmedPage, ErrorPage } from './component';
+import { Navbar, MainPage, LoginPage, MeetingCreatePage, MeetingFillPage, MeetingViewPage, VoteCreatePage, VoteFillPage, VoteViewPage, MeetingConfirmedPage, ErrorPage } from './component';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <Navbar />
         <Routes>
           <Route exact path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage/>} />

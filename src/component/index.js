@@ -9,3 +9,4 @@ export { default as VoteFillPage } from "./VoteFillPage";
 export { default as VoteViewPage } from "./VoteViewPage";
 export { default as MeetingConfirmedPage } from "./MeetingConfirmedPage";
 export { default as ErrorPage } from "./ErrorPage";
+export { default as Navbar } from "./Navbar";
