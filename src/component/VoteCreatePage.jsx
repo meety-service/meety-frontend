@@ -62,7 +62,7 @@ const VoteCreatePage = () => {
   };
 
   return (
-    <div className="p-[14px]">
+    <div className="nav_top_padding p-[14px]">
       <PageTitle title="투표 폼 생성하기" />
       <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       <div className="text-[12px] font-[700] text-right">
