@@ -27,7 +27,7 @@ const ErrorPage = () => {
         </p>
       </div>
       <div className="absolute bottom-0 px-3 mb-7 w-full">
-        <GradationButton text={"메인화면으로 이동하기"} onButtonClick={navigate("/")} />
+        <GradationButton text={"메인화면으로 이동하기"} onButtonClick={() => navigate("/")} />
         </div>
     </div>
   );
