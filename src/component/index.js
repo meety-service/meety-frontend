@@ -14,3 +14,5 @@ export { default as Navbar } from "./Navbar";
 export { default as PageTitle } from "./PageTitle";
 export { default as StepTitle } from "./StepTitle";
 export { default as ListHeader } from "./ListHeader";
+
+export { default as GradationButton } from "./GradationButton";
