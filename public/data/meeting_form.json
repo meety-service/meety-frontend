@@ -1,0 +1,7 @@
+{
+  "name": "소공 1차 회의",
+  "available_dates": [{ "date": "2023-11-08" }, { "date": "2023-11-09" }],
+  "start_time": "02:30:00",
+  "end_time": "23:00:00",
+  "timezone": "Asia/Seoul"
+}
