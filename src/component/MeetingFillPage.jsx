@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import { useParams } from "react-router";
 
 const MeetingFillPage = () => {
-    return (
-        <div>Fill Meeting Form</div>
-      )
-}
+  const { id } = useParams();
 
-export default MeetingFillPage
+  return <div>Fill Meeting Form {id}</div>;
+};
+
+export default MeetingFillPage;
