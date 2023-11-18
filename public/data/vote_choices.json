@@ -1,0 +1,37 @@
+{
+  "members": 3,
+  "participants": 2,
+  "close": 0,
+  "vote_choices": [
+    {
+      "id": 3,
+      "date": "2023-11-02",
+      "start_time": "12:00:00",
+      "end_time": "13:30:00",
+      "count": 0
+    },
+    {
+      "id": 4,
+      "date": "2023-11-02",
+      "start_time": "17:00:00",
+      "end_time": "17:30:00",
+      "count": 2
+    },
+    {
+      "id": 5,
+      "date": "2023-11-03",
+      "start_time": "12:00:00",
+      "end_time": "13:30:00",
+      "count": 1
+    }
+  ],
+  "largest_choices": [
+    {
+      "id": 4,
+      "date": "2023-11-02",
+      "start_time": "17:00:00",
+      "end_time": "17:30:00"
+    }
+  ],
+  "user_choices": [{ "id": 3 }]
+}
