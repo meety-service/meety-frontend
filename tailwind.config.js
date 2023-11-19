@@ -7,7 +7,8 @@ module.exports = {
     extend: {
       colors: {
         meety: {
-          btn_light_blue: "#4777F1",
+          btn_light_blue: "#779CF9",
+          btn_middle_blue: "#4777F1",
           btn_dark_blue: "#1550E8",
           main_background: "#FAFAFA",
           del_red: "#E43434",
@@ -26,6 +27,6 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 }
 

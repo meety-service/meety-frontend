@@ -2,17 +2,13 @@ import React from "react";
 import PageTitle from "./PageTitle";
 import { useNavigate } from "react-router-dom";
 import GradationButton from "./GradationButton";
+import MainOptionButton from "./MainOptionButton";
 
 const parsedMeetingInfo = {
   meetings: [
     { id: 3, name: "소공 1차 회의", isMaster: 0 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
-    { id: 7, name: "프로젝트 2차 설계회의", isMaster: 1 },
+    { id: 7, name: "프로젝트 2차 설계 회의", isMaster: 1 },
+    { id: 404, name: "집에 보내줘..", isMaster: 0 },
   ],
 };
 
@@ -27,15 +23,17 @@ const MainPage = () => {
         </div>
         <div className="w-full h-full flex flex-col justify-center items-center px-5 pt-20 pb-28">
           {/*옵션 스크롤 바*/}
-          <div className="w-full md:w-2/5 h-full py-3 px-3 bg-stone-400 shadow-md shadow-stone-400 rounded-lg">
-            <div className="w-full h-full space-y-4 overflow-y-scroll rounded-lg">
+          <div className="w-full md:w-2/5 h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
+            <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
               {parsedMeetingInfo.meetings.map((meetingInfo) => (
-                <div
+                <MainOptionButton
                   key={meetingInfo.id}
-                  className="h-16 w-full flex flex-row items-center justify-center bg-gradient-to-r rounded-2xl shadow-md border-2 border-solid border-meety-component_outline_gray mx-auto bg-white"
-                >
-                  <p className="text-lg font-extrabold">{meetingInfo.name}</p>
-                </div>
+                  text={meetingInfo.name}
+                  isMaster={meetingInfo.isMaster}
+                  onButtonClick={() => {
+                    console.log(meetingInfo.id);
+                  }}
+                />
               ))}
             </div>
           </div>

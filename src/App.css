@@ -1,12 +1,4 @@
-.nav-menu {
-  right: -100%; /* 오른쪽으로 숨겨짐 */
-  transition: 300ms;
-}
-
-.nav-menu.active {
-  right: 0; /* 활성화되면 오른쪽에서 슬라이드하여 나타남 */
-  transition: 300ms;
-}
+/* Common Styles */
 
 :root {
   --vh: 100%;
@@ -18,4 +10,28 @@
 
 .mobile_h_fit {
   height: calc(var(--vh, 1vh) * 100);
+}
+
+
+/* Paticular Styles */
+
+.nav-menu {
+  right: -100%;
+  transition: 300ms;
+}
+
+.nav-menu.active {
+  right: 0;
+  transition: 300ms;
+}
+
+.option-icon-rotate-180 {
+  transition: 300ms;
+  transform: rotate( -180deg );
+}
+
+.main-option-menu-slide-in {
+  margin-top: 0em;
+  transition-property: margin-top;
+  transition-duration: 300ms;
 }
