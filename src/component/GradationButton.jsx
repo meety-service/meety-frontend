@@ -8,7 +8,7 @@ const GradationButton = ({ text, onButtonClick }) => {
         onClick={() => {
           onButtonClick();
         }}
-        className="h-[68px] flex flex-row items-center justify-center align-middle w-full md:w-2/5 bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue rounded-full shadow-2xl"
+        className="h-[68px] flex flex-row items-center justify-center align-middle w-full md:w-2/5 bg-gradient-to-r from-meety-btn_middle_blue to-meety-btn_dark_blue rounded-full shadow-md shadow-stone-500"
       >
         <p className="text-xl font-extrabold text-white">
           {text}

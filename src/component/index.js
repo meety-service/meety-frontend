@@ -18,3 +18,6 @@ export { default as ListHeader } from "./ListHeader";
 export { default as ScheduleList } from "./ScheduleList";
 
 export { default as GradationButton } from "./GradationButton";
+export { default as GoogleLoginButton } from "./GoogleLoginButton";
+export { default as MainOptionButton } from "./MainOptionButton"; 
+
