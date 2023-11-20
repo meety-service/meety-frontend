@@ -30,7 +30,8 @@
       "id": 4,
       "date": "2023-11-02",
       "start_time": "17:00:00",
-      "end_time": "17:30:00"
+      "end_time": "17:30:00",
+      "count": 2
     }
   ],
   "user_choices": [{ "id": 3 }]

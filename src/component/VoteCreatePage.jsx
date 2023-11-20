@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import KeyboardDoubleArrowDownRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowDownRounded";
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
-import { PageTitle, StepTitle, ListHeader, ScheduleList } from "./";
+import {
+  PageTitle,
+  StepTitle,
+  SubMessage,
+  ListHeader,
+  ScheduleList,
+  GradationButton,
+} from "./";
 import { getAllSchedules } from "../utils/axios";
 
 const VoteCreatePage = () => {
@@ -31,8 +39,8 @@ const VoteCreatePage = () => {
 
   const addDefaultVoteOption = () => {
     const newOption = {
-      date: "2023-11-29",
-      start_time: "10:00:00",
+      date: "2023-10-08",
+      start_time: "16:00:00",
       end_time: "18:00:00",
     };
     setVoteOptions((options) => [...options, newOption]);
@@ -84,54 +92,101 @@ const VoteCreatePage = () => {
       <div className="text-[12px] font-[700] text-right">
         표준시 (Time Zone)
       </div>
-      <ListHeader title="가장 많이 겹치는 시간대는?" />
-      <ScheduleList members={members} schedules={schedules} />
+      <div className="mx-[20px]">
+        <ListHeader title="가장 많이 겹치는 시간대는?" />
+        <ScheduleList members={members} schedules={schedules} />
+      </div>
+      <div className="flex w-full justify-center py-[40px]">
+        <KeyboardDoubleArrowDownRoundedIcon />
+      </div>
       <StepTitle title="2. 투표지를 만들어보세요." />
-      <ListHeader title="투표 선택지를 추가해보세요." />
-      <div className="text-[14px] font-[700]">
-        (1) 날짜를 입력하세요. ||
-        <input type="date" value={optionDate} onChange={changeDate} />
-      </div>
-      <div className="text-[14px] font-[700]">
-        (2) 시작 시간을 입력하세요. ||
-        <input type="time" value={optionStartTime} onChange={changeStart} />
-      </div>
-      <div className="text-[14px] font-[700]">
-        (3) 종료 시간을 입력하세요. ||
-        <input type="time" value={optionEndTime} onChange={changeEnd} />
-      </div>
-      <div className="bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] font-[700] text-white">
-        <button onClick={addVoteOption}>추가하기</button>
-      </div>
-      <div>
-        <button onClick={addDefaultVoteOption}>기본값 추가하기</button>
-      </div>
-      <ListHeader title="다음과 같이 투표를 진행합니다." />
-      <ul>
-        {voteOptions.map((option, index) => (
-          <div key={index} className="flex justify-between">
-            {index + 1} {formatOption(option)}
-            <button onClick={() => removeVoteOption(index)}>
-              <RemoveCircleOutlineRoundedIcon />
+      <div className="m-[20px]">
+        <ListHeader title="투표 선택지를 추가해보세요." />
+        <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
+          <div className="flex justify-between px-[8px] py-[4px]">
+            <div className="text-[14px] font-[700]">(1) 날짜를 입력하세요.</div>
+            <input type="date" value={optionDate} onChange={changeDate} />
+          </div>
+          <div className="flex justify-between px-[8px] py-[4px]">
+            <div className="text-[14px] font-[700]">
+              (2) 시작 시간을 입력하세요.
+            </div>
+            <input type="time" value={optionStartTime} onChange={changeStart} />
+          </div>
+          <div className="flex justify-between px-[8px] py-[4px]">
+            <div className="text-[14px] font-[700]">
+              (3) 종료 시간을 입력하세요.
+            </div>
+            <input type="time" value={optionEndTime} onChange={changeEnd} />
+          </div>
+          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
+            <button
+              className="w-full h-full font-[700] text-white"
+              onClick={addVoteOption}
+            >
+              추가하기
             </button>
           </div>
-        ))}
-      </ul>
-      <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
-      <div>
-        <button
-          onClick={() => {
-            navigate(`/vote/fill/${id}`, { replace: true });
-          }}
-        >
-          투표 폼 생성하기
-        </button>
+          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
+            <button
+              className="w-full h-full font-[700] text-white"
+              onClick={addDefaultVoteOption}
+            >
+              기본값 추가하기 (테스트)
+            </button>
+          </div>
+        </div>
       </div>
+      <div className="mx-[20px]">
+        <ListHeader title="다음과 같이 투표를 진행합니다." />
+        {voteOptions.map((option, index) => (
+          <div
+            key={index}
+            className="border border-solid border-meety-component_outline_gray rounded-[10px] shadow-lg p-[6px] my-[15px]"
+          >
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <div className="flex w-[20px] h-[24px] items-center justify-center rounded-[5px] bg-meety-cal_blue">
+                  <div className="text-[12px] font-[700] text-white">
+                    {index + 1}
+                  </div>
+                </div>
+                <div className="w-[6px]"></div>
+                <div className="text-[12px] font-[700]">
+                  {formatOption(option)}
+                </div>
+              </div>
+              <button
+                className="text-meety-del_red"
+                onClick={() => removeVoteOption(index)}
+              >
+                <RemoveCircleOutlineRoundedIcon />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex w-full justify-center py-[40px]">
+        <KeyboardDoubleArrowDownRoundedIcon />
+      </div>
+      <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
+      <div className="px-[40px]">
+        <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
+        <SubMessage title="투표 폼을 다른 사람들에게 공유할 수 있습니다." />
+      </div>
+      <div className="h-[20px]" />
+      <GradationButton
+        text="투표 폼 생성하기"
+        onButtonClick={() => {
+          navigate(`/vote/fill/${id}`, { replace: true });
+        }}
+      />
+      <div className="h-[40px]" />
     </div>
   );
 };
 
-const formatDate = (dateString) => {
+export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString("ko-KR", {
     month: "long",
     day: "numeric",
@@ -139,8 +194,18 @@ const formatDate = (dateString) => {
   });
 };
 
-const formatOption = (option) => {
-  return `${formatDate(option.date)} ${option.start_time} ~ ${option.end_time}`;
+export const formatTime = (timeString) => {
+  return timeString.replace(/^(\d{2}:\d{2}):\d{2}$/, "$1");
+};
+
+export const formatOption = (option) => {
+  return (
+    formatDate(option.date) +
+    " " +
+    formatTime(option.start_time) +
+    " ~ " +
+    formatTime(option.end_time)
+  );
 };
 
 const groupByDate = (flattenedArray) => {
