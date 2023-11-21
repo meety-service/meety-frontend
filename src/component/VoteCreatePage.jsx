@@ -8,14 +8,17 @@ import {
   SubMessage,
   ListHeader,
   ScheduleList,
+  OptionListItem,
   GradationButton,
 } from "./";
-import { getAllSchedules } from "../utils/axios";
+import { getAllSchedules, getMeetingForm } from "../utils/axios";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  const [timezone, setTimezone] = useState("");
 
   const [optionDate, setOptionDate] = useState("");
 
@@ -77,6 +80,9 @@ const VoteCreatePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getMeetingForm(id).then((data) => {
+        setTimezone(data.timezone);
+      });
       await getAllSchedules(id).then((data) => {
         setMembers(data.members);
         setSchedules(data.schedules);
@@ -90,7 +96,7 @@ const VoteCreatePage = () => {
       <PageTitle title="투표 폼 생성하기" />
       <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       <div className="text-[12px] font-[700] text-right">
-        표준시 (Time Zone)
+        표준시 (Time Zone) {timezone}
       </div>
       <div className="mx-[20px]">
         <ListHeader title="가장 많이 겹치는 시간대는?" />
@@ -140,30 +146,19 @@ const VoteCreatePage = () => {
       <div className="mx-[20px]">
         <ListHeader title="다음과 같이 투표를 진행합니다." />
         {voteOptions.map((option, index) => (
-          <div
+          <OptionListItem
             key={index}
-            className="border border-solid border-meety-component_outline_gray rounded-[10px] shadow-lg p-[6px] my-[15px]"
-          >
-            <div className="flex justify-between">
-              <div className="flex items-center">
-                <div className="flex w-[20px] h-[24px] items-center justify-center rounded-[5px] bg-meety-cal_blue">
-                  <div className="text-[12px] font-[700] text-white">
-                    {index + 1}
-                  </div>
-                </div>
-                <div className="w-[6px]"></div>
-                <div className="text-[12px] font-[700]">
-                  {formatOption(option)}
-                </div>
-              </div>
+            index={index}
+            option={option}
+            endComponent={
               <button
                 className="text-meety-del_red"
                 onClick={() => removeVoteOption(index)}
               >
                 <RemoveCircleOutlineRoundedIcon />
               </button>
-            </div>
-          </div>
+            }
+          />
         ))}
       </div>
       <div className="flex w-full justify-center py-[40px]">
