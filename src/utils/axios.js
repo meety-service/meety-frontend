@@ -1,5 +1,14 @@
 import axios from "axios";
 
+export const getMeetingForm = async (id) => {
+  try {
+    const response = await axios.get("/data/meeting_form.json");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getAllSchedules = async (id) => {
   try {
     const response = await axios.get("/data/all_schedules.json");
