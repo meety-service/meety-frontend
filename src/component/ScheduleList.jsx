@@ -44,6 +44,10 @@ const ScheduleList = ({ members, schedules }) => {
   );
 };
 
+const memberPropTypes = PropTypes.shape({
+  nickname: PropTypes.string.isRequired,
+});
+
 ScheduleList.propTypes = {
   members: PropTypes.number.isRequired,
   schedules: PropTypes.arrayOf(
@@ -59,9 +63,5 @@ ScheduleList.propTypes = {
     })
   ).isRequired,
 };
-
-const memberPropTypes = PropTypes.shape({
-  nickname: PropTypes.string.isRequired,
-});
 
 export default ScheduleList;
