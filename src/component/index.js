@@ -17,6 +17,8 @@ export { default as StepTitle } from "./StepTitle";
 export { default as SubMessage } from "./SubMessage";
 export { default as ListHeader } from "./ListHeader";
 export { default as ScheduleList } from "./ScheduleList";
+export { default as OptionListItem } from "./OptionListItem";
+export { default as IndexedItemHeader } from "./IndexedItemHeader";
 
 export { default as GradationButton } from "./GradationButton";
 export { default as GoogleLoginButton } from "./GoogleLoginButton";
