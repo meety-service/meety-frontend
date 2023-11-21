@@ -1,19 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PageTitle from "./PageTitle";
 import { useNavigate } from "react-router-dom";
 import GradationButton from "./GradationButton";
 import MainOptionButton from "./MainOptionButton";
+import { getMeetingInfo } from "../utils/axios";
 
-const parsedMeetingInfo = {
-  meetings: [
-    { id: 3, name: "소공 1차 회의", isMaster: 0 },
-    { id: 7, name: "프로젝트 2차 설계 회의", isMaster: 1 },
-    { id: 404, name: "집에 보내줘..", isMaster: 0 },
-  ],
-};
+
+// 사용자의 state 확인 후 어느 페이지로 이동할지 결정
+const getNavigationUrl = (id, state) => {
+  switch(state) {
+    case 0:
+      return `/meeting/fill/${id}`
+    case 1:
+      return `/meeting/view/${id}`
+    case 2:
+      return `/vote/fill/${id}`
+    case 3:
+      return `/vote/view/${id}`
+    case 5:
+      return `/meeting/confirmed/${id}`
+    default:
+      return `/error`
+  }
+}
+
 
 const MainPage = () => {
   const navigate = useNavigate();
+
+  const [meetingInfo, setMeetingInfo] = useState([]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      await getMeetingInfo().then((data) => {
+        setMeetingInfo(data.meetings)
+      });
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="nav_top_padding mobile_h_fit bg-white w-screen h-screen">
@@ -25,13 +49,14 @@ const MainPage = () => {
           {/*옵션 스크롤 바*/}
           <div className="w-full md:w-2/5 h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
             <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
-              {parsedMeetingInfo.meetings.map((meetingInfo) => (
+              {meetingInfo  .map((info) => (
                 <MainOptionButton
-                  key={meetingInfo.id}
-                  text={meetingInfo.name}
-                  isMaster={meetingInfo.isMaster}
+                  key={info.id}
+                  text={info.name}
+                  isMaster={info.isMaster}
                   onButtonClick={() => {
-                    console.log(meetingInfo.id);
+                    const url = getNavigationUrl(info.id, info.user_state)
+                    navigate(url, { replace: true });
                   }}
                 />
               ))}
