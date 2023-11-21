@@ -17,3 +17,12 @@ export const getVoteChoices = async (id) => {
     console.error(error);
   }
 };
+
+export const getMeetingInfo = async () => {
+  try {
+    const response = await axios.get("/data/main_meeting.json");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
