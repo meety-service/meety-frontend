@@ -1,21 +1,28 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ReactComponent as Icon } from "../assets/logo.svg";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
+import { getCookie, removeCookie } from "../utils/cookie";
 
 const Navbar = () => {
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
+  const navigate = useNavigate();
 
   const handleLogoutButtonClick = () => {
     console.log("Logout");
+    removeCookie('X-Gapi-Refresh-Token');
+    console.log(getCookie('X-Gapi-Refresh-Token'))
+    setSidebar(false);
+    navigate('/login');
   };
 
   const handleRevokeAccessButtonClick = () => {
     console.log("Revoke Access");
+    // TODO: 회원 탈퇴 기능 추가
   };
 
   return (

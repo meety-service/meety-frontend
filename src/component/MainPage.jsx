@@ -1,39 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PageTitle from "./PageTitle";
 import { useNavigate } from "react-router-dom";
 import GradationButton from "./GradationButton";
 import MainOptionButton from "./MainOptionButton";
 import { getMeetingInfo } from "../utils/axios";
-
-
-// 사용자의 state 확인 후 어느 페이지로 이동할지 결정
-const getNavigationUrl = (id, state) => {
-  switch(state) {
-    case 0:
-      return `/meeting/fill/${id}`
-    case 1:
-      return `/meeting/view/${id}`
-    case 2:
-      return `/vote/fill/${id}`
-    case 3:
-      return `/vote/view/${id}`
-    case 5:
-      return `/meeting/confirmed/${id}`
-    default:
-      return `/error`
-  }
-}
-
+import useLoginCheck from "../hooks/useLoginCheck";
 
 const MainPage = () => {
   const navigate = useNavigate();
-
   const [meetingInfo, setMeetingInfo] = useState([]);
-  
+
+  // 사용자의 state 확인 후 어느 페이지로 이동할지 결정
+  const getNavigationUrl = useCallback((id, state) => {
+    switch (state) {
+      case 0:  // 미팅 폼 작성 이전 -> 미팅 폼 작성 페이지
+        return `/meeting/fill/${id}`;
+      case 1:  // 미팅 폼 작성 이후 -> 미팅 폼 작성 완료 페이지
+        return `/meeting/view/${id}`;
+      case 2:  // 투표 참여 이전 -> 투표 폼 작성 페이지
+        return `/vote/fill/${id}`;
+      case 3:  // 투표 참여 이전 -> 투표 폼 작성 완료 페이지
+        return `/vote/view/${id}`;
+      case 4:  // 미팅 확정 -> 미팅 확정 페이지
+        return `/meeting/confirmed/${id}`;
+      default: // user_status 에러 -> 에러 페이지
+        return `/error`;
+    }
+  });
+
+  useLoginCheck();  // 로그인 여부 확인 -> 미 로그인 시 로그인 페이지로 이동
+
+  // 서버에서 미팅 정보 fetch
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingInfo().then((data) => {
-        setMeetingInfo(data.meetings)
+        setMeetingInfo(data.meetings);
       });
     };
     fetchData();
@@ -49,14 +50,14 @@ const MainPage = () => {
           {/*옵션 스크롤 바*/}
           <div className="w-full md:w-2/5 h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
             <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
-              {meetingInfo  .map((info) => (
+              {meetingInfo.map((info) => (
                 <MainOptionButton
                   key={info.id}
                   text={info.name}
                   isMaster={info.isMaster}
                   onButtonClick={() => {
-                    const url = getNavigationUrl(info.id, info.user_state)
-                    navigate(url, { replace: true });
+                    const url = getNavigationUrl(info.id, info.user_state);
+                    navigate(url);
                   }}
                 />
               ))}
