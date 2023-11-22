@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import KeyboardDoubleArrowDownRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowDownRounded";
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import {
   PageTitle,
   StepTitle,
@@ -93,19 +94,36 @@ const VoteCreatePage = () => {
 
   return (
     <div className="nav_top_padding mobile_h_fit">
-      <PageTitle title="투표 폼 생성하기" />
-      <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
-      <div className="text-[12px] font-[700] text-right">
-        표준시 (Time Zone) {timezone}
+      <div className="ml-4 mt-8">
+        <PageTitle title="투표 폼 생성하기" />
+      </div>
+      <div className="ml-6 mt-4">
+        <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
+      </div>
+      <div className="flex justify-end items-center text-[12px] font-[700] text-right my-4 mr-6">
+        <div>표준시 (Time Zone)</div>
+        <div className="w-[6px]" />
+        <div className="flex w-[142px] h-[26px] items-center border border-solid border-meety-component_outline_gray rounded-[5px] pl-[6px]">
+          {timezone}
+        </div>
       </div>
       <div className="mx-[20px]">
-        <ListHeader title="가장 많이 겹치는 시간대는?" />
+        <ListHeader
+          title="가장 많이 겹치는 시간대는?"
+          endComponent={
+            <button className="text-white" onClick={() => {}}>
+              <TuneRoundedIcon />
+            </button>
+          }
+        />
         <ScheduleList members={members} schedules={schedules} />
       </div>
       <div className="flex w-full justify-center py-[40px]">
         <KeyboardDoubleArrowDownRoundedIcon />
       </div>
-      <StepTitle title="2. 투표지를 만들어보세요." />
+      <div className="ml-6">
+        <StepTitle title="2. 투표지를 만들어보세요." />
+      </div>
       <div className="m-[20px]">
         <ListHeader title="투표 선택지를 추가해보세요." />
         <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
