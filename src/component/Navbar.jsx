@@ -6,6 +6,7 @@ import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRigh
 import LogoutIcon from "@mui/icons-material/Logout";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
 import { getCookie, removeCookie } from "../utils/cookie";
+import { USER_TOKEN } from "../utils/constants";
 
 const Navbar = () => {
   const [sidebar, setSidebar] = useState(false);
@@ -14,8 +15,8 @@ const Navbar = () => {
 
   const handleLogoutButtonClick = () => {
     console.log("Logout");
-    removeCookie('X-Gapi-Refresh-Token');
-    console.log(getCookie('X-Gapi-Refresh-Token'))
+    removeCookie(USER_TOKEN);
+    console.log(getCookie(USER_TOKEN))
     setSidebar(false);
     navigate('/login');
   };
