@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ReactComponent as Icon } from "../assets/logo.svg";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -16,9 +16,19 @@ const Navbar = () => {
   const handleLogoutButtonClick = () => {
     console.log("Logout");
     removeCookie(USER_TOKEN);
-    console.log(getCookie(USER_TOKEN))
-    setSidebar(false);
-    navigate('/login');
+    console.log(getCookie(USER_TOKEN));
+    navigate("/login");
+    /*
+    아래에서 페이지 새로 고침 하는 이유 
+    - app.js에서 
+      useEffect(() => {
+        setCurrPath(window.location.pathname);
+      })
+      코드가 useNavigate('/login')를 썼을 때 실행되지 않고, 새로고침 시에만 실행되어
+      <Navbar/>가 정상적으로 가려지기 때문
+    */
+    // TODO: 페이지 새로고침 없이 Navbar 숨김 처리 구현
+    location.reload();
   };
 
   const handleRevokeAccessButtonClick = () => {

@@ -89,7 +89,7 @@ const MainPage = () => {
                       .then((response) => {
                         if (response.data) {
                           console.log(
-                            `Is vaild user-state : ${response.data.is_validate_state}`
+                            `Is valid user-state : ${response.data.is_validate_state}`
                           );
                           console.log(`Current state : ${info.user_state}`);
                           console.log(
