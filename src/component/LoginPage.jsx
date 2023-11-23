@@ -1,5 +1,4 @@
 import React from "react";
-import { setCookie } from "../utils/cookie";
 import GoogleLoginButtonRenewal from "./GoogleLoginButtonRenewal";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
