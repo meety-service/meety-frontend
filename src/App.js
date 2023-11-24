@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Navbar, MainPage, LoginPage, MeetingCreatePage, MeetingFillPage, MeetingViewPage, VoteCreatePage, VoteFillPage, VoteViewPage, MeetingConfirmedPage, ErrorPage } from './component';
 import { CookiesProvider } from 'react-cookie';
-import CallBackPage from './component/CallBackPage';
 
 function setScreenSize() {
   let vh = window.innerHeight * 0.01;
