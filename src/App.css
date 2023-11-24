@@ -12,7 +12,6 @@
   height: calc(var(--vh, 1vh) * 100);
 }
 
-
 /* Paticular Styles */
 
 .nav-menu {
@@ -27,11 +26,67 @@
 
 .option-icon-rotate-180 {
   transition: 300ms;
-  transform: rotate( -180deg );
+  transform: rotate(-180deg);
 }
 
 .main-option-menu-slide-in {
   margin-top: 0em;
   transition-property: margin-top;
   transition-duration: 300ms;
+}
+
+/*아래는 미팅 폼 생성 페이지 관련*/
+.react-datepicker {
+  /*달력 전체*/
+  width: 300px;
+  height: 245px;
+}
+
+.react-datepicker__month-container .react-datepicker__header {
+  background-color: #4777f1;
+  color: #cfcfcf;
+}
+
+.react-datepicker__current-month {
+  font-size: 1rem;
+  color: #000;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  width: 2.3rem;
+  line-height: 2.5rem;
+}
+
+.react-datepicker__day--sunday {
+  color: red; /* 일요일 색 조정 */
+}
+
+.react-datepicker__day--saturday {
+  color: blue; /* 토요일 색 조정 */
+}
+
+.react-datepicker__day {
+  /*달력에서 선택되지 않은 모든 날짜*/
+  background-color: #e6e6e6;
+  font-size: 11px;
+  width: 35px;
+  height: 25.5px;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--highlighted {
+  /*달력에서 중복으로 선택된 날짜들*/
+  background-color: #4777f1 !important;
+  color: white !important;
+}
+
+.Dropdown-control {
+  width: 250px;
+  height: 30px;
+  font-size: 14px;
+}
+
+.Dropdown-arrow {
+  background-color: #cfcfcf;
 }
