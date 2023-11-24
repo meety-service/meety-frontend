@@ -10,11 +10,14 @@ import {
 } from "./";
 import { getVoteChoices } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
+import useLoginCheck from "../hooks/useLoginCheck";
 
 const VoteViewPage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  useLoginCheck();
 
   const [members, setMembers] = useState(0);
   const [participants, setParticipants] = useState(0);

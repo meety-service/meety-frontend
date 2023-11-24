@@ -14,11 +14,14 @@ import {
   GradationButton,
 } from "./";
 import { getAllSchedules, getMeetingForm } from "../utils/axios";
+import useLoginCheck from "../hooks/useLoginCheck";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  useLoginCheck();
 
   const [meetingForm, setMeetingForm] = useState({
     available_dates: [],
