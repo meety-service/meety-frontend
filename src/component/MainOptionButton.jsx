@@ -4,20 +4,13 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import PlaylistRemoveRoundedIcon from "@mui/icons-material/PlaylistRemoveRounded";
 
-const MainOptionButton = ({ text, isMaster, onButtonClick }) => {
+
+const MainOptionButton = ({ info, text, isMaster, onOptionButtonClick, onHandleDeleteButtonClick, onHandleRemoveFromListButtonClick }) => {
   const [dropDown, setDropDown] = useState(false);
   const toggleDropDown = () => setDropDown(!dropDown);
 
-  const handleDeleteButtonClick = () => {
-    console.log("미팅 삭제하기");
-  };
-
-  const handleRemoveFromListButtonClick = () => {
-    console.log("리스트에서 삭제하기");
-  };
-
   return (
-    <div className="relative h-fit w-full shadow-md shadow-stone-400 rounded-xl bg-stone-100">
+    <div className="test relative h-fit w-full shadow-md shadow-stone-400 rounded-xl bg-stone-100">
       <div
         className={`${
           dropDown
@@ -34,7 +27,7 @@ const MainOptionButton = ({ text, isMaster, onButtonClick }) => {
         >
           <button
             onClick={() => {
-              onButtonClick();
+              onOptionButtonClick()
             }}
             className="flex flex-row justify-start items-center gap-x-2 w-full h-full"
           >
@@ -68,11 +61,11 @@ const MainOptionButton = ({ text, isMaster, onButtonClick }) => {
           {isMaster == 1 ? (
             <button
               onClick={() => {
-                handleDeleteButtonClick();
+                onHandleDeleteButtonClick(info);
               }}
               className="flex flex-row justify-center items-center p-2 h-10 bg-white text-meety-del_red active:bg-meety-del_red active:text-white rounded-lg"
             >
-              <DeleteForeverRoundedIcon fontSize="small"/>
+              <DeleteForeverRoundedIcon fontSize="small" />
               <div className="pl-1 font-extrabold text-sm">미팅 삭제하기</div>
             </button>
           ) : (
@@ -80,11 +73,11 @@ const MainOptionButton = ({ text, isMaster, onButtonClick }) => {
           )}
           <button
             onClick={() => {
-              handleRemoveFromListButtonClick();
+              onHandleRemoveFromListButtonClick(info);
             }}
             className="flex flex-row justify-center items-center p-2 h-10 bg-white text-meety-del_red active:bg-meety-del_red active:text-white rounded-lg"
           >
-            <PlaylistRemoveRoundedIcon fontSize="small"/>
+            <PlaylistRemoveRoundedIcon fontSize="small" />
             <p className="pl-1 font-extrabold text-sm">리스트에서 삭제하기</p>
           </button>
         </div>
@@ -93,10 +86,14 @@ const MainOptionButton = ({ text, isMaster, onButtonClick }) => {
   );
 };
 
+
 MainOptionButton.propTypes = {
+  info: PropTypes.object.isRequired,
   text: PropTypes.string.isRequired,
   isMaster: PropTypes.number.isRequired,
-  onButtonClick: PropTypes.func.isRequired,
+  onOptionButtonClick: PropTypes.func.isRequired,
+  onHandleDeleteButtonClick: PropTypes.func.isRequired,
+  onHandleRemoveFromListButtonClick: PropTypes.func.isRequired
 };
 
 export default MainOptionButton;
