@@ -7,11 +7,6 @@ import useLoginCheck from "../hooks/useLoginCheck";
 import { axiosWH } from "../utils/axios";
 import { dateParser } from "../utils/dateParser";
 
-let confirmedDateList = [
-  "10월 6일 (금) 16:30 ~ 18:00",
-  "10월 7일 (토) 18:30 ~ 20:00",
-];
-
 const MeetingConfirmedPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();

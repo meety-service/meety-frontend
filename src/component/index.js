@@ -10,7 +10,6 @@ export { default as VoteViewPage } from "./VoteViewPage";
 export { default as MeetingConfirmedPage } from "./MeetingConfirmedPage";
 export { default as ErrorPage } from "./ErrorPage";
 export { default as Navbar } from "./Navbar";
-export { default as CallBackPage } from "./CallBackPage";
 
 export { default as PageTitle } from "./PageTitle";
 export { default as StepTitle } from "./StepTitle";
@@ -22,6 +21,5 @@ export { default as OptionListItem } from "./OptionListItem";
 export { default as IndexedItemHeader } from "./IndexedItemHeader";
 
 export { default as GradationButton } from "./GradationButton";
-export { default as GoogleLoginButton } from "./GoogleLoginButton";
 export { default as MainOptionButton } from "./MainOptionButton"; 
 

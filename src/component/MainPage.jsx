@@ -5,6 +5,7 @@ import GradationButton from "./GradationButton";
 import MainOptionButton from "./MainOptionButton";
 import { axiosWH } from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
+import { handleError } from "../utils/handleError";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ const MainPage = () => {
 
   // 사용자의 state 확인 후 어느 페이지로 이동할지 결정
   const getNavigationUrl = useCallback((id, state) => {
-    console.log(`id: ${id}, user-state: ${state}`);
     switch (state) {
       case 0: // 미팅 폼 작성 이전 -> 미팅 폼 작성 페이지
         return `/meeting/fill/${id}`;
@@ -40,17 +40,7 @@ const MainPage = () => {
         }
       })
       .catch(function (error) {
-        if (error.response) {
-          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-          console.log(error.response);
-        } else if (error.request) {
-          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-          console.log(error.request);
-        } else {
-          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-          console.log("Error", error.message);
-        }
-        console.log(error.config);
+        handleError(error);
       });
   };
 
@@ -65,17 +55,7 @@ const MainPage = () => {
         }
       })
       .catch(function (error) {
-        if (error.response) {
-          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-          console.log(error.response);
-        } else if (error.request) {
-          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-          console.log(error.request);
-        } else {
-          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-          console.log("Error", error.message);
-        }
-        console.log(error.config);
+        handleError(error);
       });
   };
 
@@ -94,17 +74,7 @@ const MainPage = () => {
         }
       })
       .catch(function (error) {
-        if (error.response) {
-          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-          console.log(error.response);
-        } else if (error.request) {
-          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-          console.log(error.request);
-        } else {
-          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-          console.log("Error", error.message);
-        }
-        console.log(error.config);
+        handleError(error);
       });
   };
   
@@ -139,17 +109,7 @@ const MainPage = () => {
         }
       })
       .catch(function (error) {
-        if (error.response) {
-          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-          console.log(error.response);
-        } else if (error.request) {
-          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-          console.log(error.request);
-        } else {
-          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-          console.log("Error", error.message);
-        }
-        console.log(error.config);
+        handleError(error);
       });
   };
 
