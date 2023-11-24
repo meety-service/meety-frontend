@@ -31,7 +31,6 @@ function App() {
           <Routes>
             <Route exact path="/" element={<MainPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/login/callback" element={<CallBackPage />} />
             <Route path="/meeting/create" element={<MeetingCreatePage />} />
             <Route path="/meeting/fill/:id" element={<MeetingFillPage />} />
             <Route path="/meeting/view/:id" element={<MeetingViewPage />} />
