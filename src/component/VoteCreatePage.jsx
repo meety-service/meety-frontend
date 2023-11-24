@@ -7,6 +7,7 @@ import {
   PageTitle,
   StepTitle,
   SubMessage,
+  TimeSlot,
   ListHeader,
   ScheduleList,
   OptionListItem,
@@ -19,7 +20,12 @@ const VoteCreatePage = () => {
 
   const navigate = useNavigate();
 
-  const [timezone, setTimezone] = useState("");
+  const [meetingForm, setMeetingForm] = useState({
+    available_dates: [],
+    start_time: "00:00:00",
+    end_time: "00:00:00",
+    timezone: "",
+  });
 
   const [optionDate, setOptionDate] = useState("");
 
@@ -82,7 +88,7 @@ const VoteCreatePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingForm(id).then((data) => {
-        setTimezone(data.timezone);
+        setMeetingForm(data);
       });
       await getAllSchedules(id).then((data) => {
         setMembers(data.members);
@@ -100,13 +106,11 @@ const VoteCreatePage = () => {
       <div className="ml-6 mt-4">
         <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       </div>
-      <div className="flex justify-end items-center text-[12px] font-[700] text-right my-4 mr-6">
-        <div>표준시 (Time Zone)</div>
-        <div className="w-[6px]" />
-        <div className="flex w-[142px] h-[26px] items-center border border-solid border-meety-component_outline_gray rounded-[5px] pl-[6px]">
-          {timezone}
-        </div>
-      </div>
+      <TimeSlot
+        meetingForm={meetingForm}
+        members={members}
+        schedules={schedules}
+      />
       <div className="mx-[20px]">
         <ListHeader
           title="가장 많이 겹치는 시간대는?"
