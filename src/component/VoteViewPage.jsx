@@ -4,6 +4,7 @@ import {
   PageTitle,
   StepTitle,
   ListHeader,
+  IndexedItemHeader,
   GradationButton,
   SubMessage,
 } from "./";
@@ -54,30 +55,37 @@ const VoteViewPage = () => {
           <div
             key={index}
             className={
-              "flex justify-between" +
+              "flex justify-between items-center border border-solid border-meety-component_outline_gray rounded-[10px] shadow-lg p-[6px] my-[15px]" +
               (option.user_choice
-                ? " bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue"
+                ? " bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-white"
                 : "")
             }
           >
-            <div className="flex">
-              <div>{index + 1}</div>
+            <div className="flex items-center">
+              <IndexedItemHeader
+                index={index}
+                isInverted={option.user_choice === true}
+              />
               <div className="w-[6px]" />
-              <div>{formatOption(option)}</div>
+              <div className="text-[12px] font-[700]">
+                {formatOption(option)}
+              </div>
             </div>
-            <div className="flex">
+            <div className="flex items-center">
               {option.largest_choice ? (
-                <div className="px-[6px]">최다 득표</div>
+                <div className="border border-solid border-meety-component_outline_gray rounded-[8px] text-[8px] font-[700] px-[6px] py-[2px] mx-[6px]">
+                  최다 득표
+                </div>
               ) : (
                 ""
               )}
-              <div>
+              <div className="text-[12px]">
                 {option.count}/{participants} (명)
               </div>
             </div>
           </div>
         ))}
-        <div className="text-right">
+        <div className="text-[12px] text-right">
           {members}명 중 {participants}명 참여
         </div>
       </div>

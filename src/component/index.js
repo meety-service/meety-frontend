@@ -15,6 +15,7 @@ export { default as CallBackPage } from "./CallBackPage";
 export { default as PageTitle } from "./PageTitle";
 export { default as StepTitle } from "./StepTitle";
 export { default as SubMessage } from "./SubMessage";
+export { default as TimeSlot } from "./TimeSlot";
 export { default as ListHeader } from "./ListHeader";
 export { default as ScheduleList } from "./ScheduleList";
 export { default as OptionListItem } from "./OptionListItem";
