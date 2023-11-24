@@ -11,11 +11,14 @@ import {
 } from "./";
 import { getMeetingForm, getVoteChoices } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
+import useLoginCheck from "../hooks/useLoginCheck";
 
 const VoteFillPage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  useLoginCheck();
 
   const [timezone, setTimezone] = useState("");
   const [members, setMembers] = useState(0);
