@@ -3,7 +3,7 @@ import PageTitle from "./PageTitle";
 import { useNavigate } from "react-router-dom";
 import GradationButton from "./GradationButton";
 import MainOptionButton from "./MainOptionButton";
-import { axiosWH, getMeetingInfo } from "../utils/axios";
+import { axiosWH } from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
 
 const MainPage = () => {
@@ -29,37 +29,136 @@ const MainPage = () => {
     }
   });
 
+  // 미팅 삭제
+  const onHandleDeleteButtonClick = async (info) => {
+    await axiosWH
+      .delete(`/meetings/${info.id}`)
+      .then((response) => {
+        if (response.status == 200) {
+          console.log("미팅 삭제 완료");
+          fetchMeetingInfo();  // 서버에서 data 다시 fetch
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
+          console.log(error.response);
+        } else if (error.request) {
+          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
+          console.log(error.request);
+        } else {
+          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
+  };
+
+  // 리스트에서 삭제
+  const onHandleRemoveFromListButtonClick = async (info) => {
+    await axiosWH
+      .patch(`/meetings/${info.id}/hiding`)
+      .then((response) => {
+        if (response.status == 200) {
+          console.log("리스트에서 삭제 완료");
+          fetchMeetingInfo();  // 서버에서 data 다시 fetch
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
+          console.log(error.response);
+        } else if (error.request) {
+          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
+          console.log(error.request);
+        } else {
+          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
+  };
+
+  const fetchMeetingInfo = async () => {
+    // 실제로 서버에서 데이터 fetch
+    await axiosWH
+      .get("/meetings")
+      .then((response) => {
+        if (response.data) {
+          console.log(response);
+          setMeetingInfo(response.data); // 사용자의 미팅 정보 저장
+        } else {
+          console.log(
+            "[MainPage.jsx] 서버에서 미팅 정보가 전달되지 않았습니다."
+          );
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
+          console.log(error.response);
+        } else if (error.request) {
+          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
+          console.log(error.request);
+        } else {
+          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
+  };
+  
+
+  // 리스트 옵션 버튼 클릭 후 해당 미팅 페이지로 이동
+  const onOptionButtonClick = async (info) => {
+    const data = {
+      user_state: info.user_state,
+    };
+
+    await axiosWH
+      .post(`/meetings/${info.id}/user-state`, data)
+      .then((response) => {
+        if (response.data) {
+          console.log(
+            `Is valid user-state : ${response.data.is_validate_state}`
+          );
+          console.log(`Current state : ${info.user_state}`);
+          console.log(`Updated state : ${response.data.latest_user_state}`);
+          const url = getNavigationUrl(
+            info.id,
+            response.data.is_validate_state
+              ? info.user_state
+              : response.data.latest_user_state
+          );
+          navigate(url);
+        } else {
+          // TODO: 데이터가 전달되지 않은 경우, ErrorPage로 이동 및 적절한 에러 문구 표시
+          console.log(
+            "[MainPage.jsx] 서버에서 갱신된 user_state 정보가 전달되지 않았습니다."
+          );
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
+          console.log(error.response);
+        } else if (error.request) {
+          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
+          console.log(error.request);
+        } else {
+          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
+  };
+
   useLoginCheck(); // 로그인 여부 확인 -> 미 로그인 시 로그인 페이지로 이동
 
   // 서버에서 미팅 정보 fetch
   useEffect(() => {
     const fetchData = async () => {
-      // 실제로 서버에서 데이터 fetch
-      await axiosWH
-        .get("/meetings")
-        .then((response) => {
-          if (response.data) {
-            console.log(response);
-            setMeetingInfo(response.data); // 사용자의 미팅 정보 저장
-          } else {
-            console.log(
-              "[MainPage.jsx] 서버에서 미팅 정보가 전달되지 않았습니다."
-            );
-          }
-        })
-        .catch(function (error) {
-          if (error.response) {
-            // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-            console.log(error.response);
-          } else if (error.request) {
-            // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-            console.log(error.request);
-          } else {
-            // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-            console.log("Error", error.message);
-          }
-          console.log(error.config);
-        });
+      fetchMeetingInfo();
     };
     fetchData();
   }, []);
@@ -77,51 +176,17 @@ const MainPage = () => {
               {meetingInfo.map((info) => (
                 <MainOptionButton
                   key={info.id}
+                  info={info}
                   text={info.name}
                   isMaster={info.isMaster}
-                  onButtonClick={async () => {
-                    const data = {
-                      user_state: info.user_state,
-                    };
-
-                    await axiosWH
-                      .post(`/meetings/${info.id}/user-state`, data)
-                      .then((response) => {
-                        if (response.data) {
-                          console.log(
-                            `Is valid user-state : ${response.data.is_validate_state}`
-                          );
-                          console.log(`Current state : ${info.user_state}`);
-                          console.log(
-                            `Updated state : ${response.data.latest_user_state}`
-                          );
-                          const url = getNavigationUrl(
-                            info.id,
-                            response.data.is_validate_state
-                              ? info.user_state
-                              : response.data.latest_user_state
-                          );
-                          navigate(url);
-                        } else {
-                          // TODO: 데이터가 전달되지 않은 경우, ErrorPage로 이동 및 적절한 에러 문구 표시
-                          console.log(
-                            "[MainPage.jsx] 서버에서 갱신된 user_state 정보가 전달되지 않았습니다."
-                          );
-                        }
-                      })
-                      .catch(function (error) {
-                        if (error.response) {
-                          // 요청이 전송되었고, 서버가 2xx 외의 상태 코드로 응답한 경우
-                          console.log(error.response);
-                        } else if (error.request) {
-                          // 요청이 전송되었지만, 응답이 수신되지 않은 경우
-                          console.log(error.request);
-                        } else {
-                          // 오류가 발생한 요청을 설정하는 동안 문제가 발생한 경우
-                          console.log("Error", error.message);
-                        }
-                        console.log(error.config);
-                      });
+                  onOptionButtonClick={() => {
+                    onOptionButtonClick(info);
+                  }}
+                  onHandleDeleteButtonClick={() => {
+                    onHandleDeleteButtonClick(info);
+                  }}
+                  onHandleRemoveFromListButtonClick={() => {
+                    onHandleRemoveFromListButtonClick(info);
                   }}
                 />
               ))}

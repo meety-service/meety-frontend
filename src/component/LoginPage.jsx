@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const LoginPage = () => {
   return (
-    <div className={"mobile_h_fit w-screen h-screen"}>
+    <div className={"mobile_h_fit w-screen h-screen bg-black"}>
       <div className="relative top-0 left-0 bg-[url('./assets/login_bg_image_sm.jpg')] md:bg-[url('./assets/login_bg_image_lg.jpg')] h-full bg-cover flex flex-col justify-center items-center">
         <div className="absolute h-full w-full bg-black opacity-50" />
         <div className="absolute h-full w-full flex flex-col justify-center items-center text-2xl font-extrabold">
