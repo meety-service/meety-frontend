@@ -107,3 +107,37 @@
   height: 0;
   overflow: hidden;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInBg {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+.login-fade-in-1 {
+  animation: fadeIn 1s ease-in;
+}
+
+.login-fade-in-2 {
+  animation: fadeIn 1s ease-in;
+}
+
+.login-fade-in-bg {
+  animation: fadeInBg 1.5s ease-in;
+}
+
+.login-fade-in-btn {
+  animation: fadeIn 0.5s ease-in;
+}
