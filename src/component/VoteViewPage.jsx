@@ -8,7 +8,7 @@ import {
   GradationButton,
   SubMessage,
 } from "./";
-import { getVoteChoices } from "../utils/axios";
+import { getMeetingInfo, getVoteChoices } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
 
@@ -19,12 +19,17 @@ const VoteViewPage = () => {
 
   useLoginCheck();
 
+  const [meetingInfo, setMeetingInfo] = useState([]);
+
   const [members, setMembers] = useState(0);
   const [participants, setParticipants] = useState(0);
   const [voteOptions, setVoteOptions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      await getMeetingInfo(id).then((data) => {
+        setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
+      });
       await getVoteChoices(id).then((data) => {
         setMembers(data.members);
         setParticipants(data.participants);
@@ -101,16 +106,20 @@ const VoteViewPage = () => {
           navigate(`/vote/fill/${id}`);
         }}
       />
-      <StepTitle title="3. 투표를 마감할까요?" />
-      <SubMessage title="투표를 마감하면 현재까지 가장 많은 투표를 받은 날짜로 미팅 일자가" />
-      <SubMessage title="결정됩니다." />
-      <div>미팅 일자: 10월 6일 (금) 16:30 ~ 18:00</div>
-      <GradationButton
-        text="투표 마감하기"
-        onButtonClick={() => {
-          navigate(`/meeting/confirmed/${id}`, { replace: true });
-        }}
-      />
+      {meetingInfo.isMaster && (
+        <div>
+          <StepTitle title="3. 투표를 마감할까요?" />
+          <SubMessage title="투표를 마감하면 현재까지 가장 많은 투표를 받은 날짜로 미팅 일자가" />
+          <SubMessage title="결정됩니다." />
+          <div>미팅 일자: 10월 6일 (금) 16:30 ~ 18:00</div>
+          <GradationButton
+            text="투표 마감하기"
+            onButtonClick={() => {
+              navigate(`/meeting/confirmed/${id}`, { replace: true });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

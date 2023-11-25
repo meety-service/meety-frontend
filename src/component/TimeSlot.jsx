@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-const TimeSlot = ({ meetingForm, members, schedules }) => {
-  const { available_dates, start_time, end_time, timezone } = meetingForm;
+const TimeSlot = ({ meetingForm, members, schedules, isDraggable = false }) => {
+  const { meeting_dates, start_time, end_time, timezone } = meetingForm;
   const intervals = calculateIntervals(start_time, end_time);
   const offset = calculateOffset(start_time);
 
   const [degrees, setDegrees] = useState([]);
 
   useEffect(() => {
-    const newDegrees = Array.from({ length: available_dates.length }, () =>
+    const newDegrees = Array.from({ length: meeting_dates.length }, () =>
       Array.from({ length: intervals }, () => 0)
     );
 
     schedules.forEach((schedule) => {
-      const i = available_dates.findIndex(
-        (available) => available.date === schedule.date
+      const i = meeting_dates.findIndex(
+        (meeting_date) => meeting_date.available_date === schedule.date
       );
       if (i === -1) {
         return;
@@ -42,13 +42,15 @@ const TimeSlot = ({ meetingForm, members, schedules }) => {
         </div>
       </div>
       <div className="flex">
-        {available_dates.map((available, i) => {
-          const { date } = available;
-          const weekday = new Date(date).getDay();
+        {meeting_dates.map((meeting_date, i) => {
+          const { available_date } = meeting_date;
+          const weekday = new Date(available_date).getDay();
 
           return (
             <div key={i} className="flex flex-col items-center mx-[4px]">
-              <div className="text-[8px] font-[700]">{formatDate(date)}</div>
+              <div className="text-[8px] font-[700]">
+                {formatDate(available_date)}
+              </div>
               <div
                 className={
                   "text-[14px] font-[700]" +
@@ -59,12 +61,12 @@ const TimeSlot = ({ meetingForm, members, schedules }) => {
                     : "")
                 }
               >
-                {formatWeekday(date)}
+                {formatWeekday(available_date)}
               </div>
               <div>
                 {Array.from({ length: intervals }, (_, j) => {
                   const opacity =
-                    degrees.length === available_dates.length &&
+                    degrees.length === meeting_dates.length &&
                     degrees[i].length === intervals
                       ? degrees[i][j] / members
                       : 0;
@@ -76,6 +78,7 @@ const TimeSlot = ({ meetingForm, members, schedules }) => {
                         "w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
                         (j !== 0 && j % 4 === offset ? " border-t-black" : "")
                       }
+                      style={{ opacity: 1 - opacity }}
                     />
                   );
                 })}
@@ -90,9 +93,9 @@ const TimeSlot = ({ meetingForm, members, schedules }) => {
 
 TimeSlot.propTypes = {
   meetingForm: PropTypes.shape({
-    available_dates: PropTypes.arrayOf(
+    meeting_dates: PropTypes.arrayOf(
       PropTypes.shape({
-        date: PropTypes.string.isRequired,
+        available_date: PropTypes.string.isRequired,
       })
     ).isRequired,
     start_time: PropTypes.string.isRequired,
@@ -120,6 +123,7 @@ TimeSlot.propTypes = {
       ),
     })
   ).isRequired,
+  isDraggable: PropTypes.bool,
 };
 
 const formatDate = (dateString) => {
@@ -140,7 +144,7 @@ const timeToMinutes = (timeString) => {
   return hours * 60 + minutes;
 };
 
-const calculateIntervals = (startTime, endTime) => {
+export const calculateIntervals = (startTime, endTime) => {
   const startMinutes = timeToMinutes(startTime);
   const endMinutes = timeToMinutes(endTime);
   return Math.floor((endMinutes - startMinutes) / 15);

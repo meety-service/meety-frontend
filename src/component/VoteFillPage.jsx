@@ -9,7 +9,13 @@ import {
   IndexedItemHeader,
   GradationButton,
 } from "./";
-import { getMeetingForm, getVoteChoices } from "../utils/axios";
+import {
+  editVotes,
+  getMeetingForm,
+  getMeetingInfo,
+  getVoteChoices,
+  submitVotes,
+} from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
 
@@ -19,6 +25,8 @@ const VoteFillPage = () => {
   const navigate = useNavigate();
 
   useLoginCheck();
+
+  const [meetingInfo, setMeetingInfo] = useState([]);
 
   const [timezone, setTimezone] = useState("");
   const [members, setMembers] = useState(0);
@@ -37,6 +45,9 @@ const VoteFillPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getMeetingInfo(id).then((data) => {
+        setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
+      });
       await getMeetingForm(id).then((data) => {
         setTimezone(data.timezone);
       });
@@ -110,7 +121,21 @@ const VoteFillPage = () => {
       <div className="h-[20px]" />
       <GradationButton
         text="제출하기"
-        onButtonClick={() => {
+        onButtonClick={async () => {
+          const vote_choices = voteOptions
+            .filter((_, index) => isSelected[index])
+            .map((option) => ({
+              id: option.id,
+            }));
+
+          if (meetingInfo.user_state === 2) {
+            await submitVotes(id, { vote_choices: vote_choices });
+          } else if (meetingInfo.user_state === 3) {
+            await editVotes(id, { vote_choices: vote_choices });
+          } else {
+            throw new Error("unexpected user_state");
+          }
+
           navigate(`/vote/view/${id}`, { replace: true });
         }}
       />
