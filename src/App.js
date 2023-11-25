@@ -12,11 +12,6 @@ function setScreenSize() {
 }
 
 function App() {
-  const [currPath, setCurrPath] = useState('/login')
-
-  useEffect(() => {
-    setCurrPath(window.location.pathname);
-  })
 
   useEffect(() => {
     setScreenSize();
@@ -27,10 +22,7 @@ function App() {
       <RecoilRoot>
         <CookiesProvider>
           <BrowserRouter>
-            {
-              // 로그인 페이지인 경우, 상단 네비게이션 바 숨김 처리
-              currPath != '/login' && <Navbar />
-            }
+          <Navbar />
             <Snackbar />
             <Routes>
               <Route exact path="/" element={<MainPage />} />

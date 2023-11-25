@@ -2,6 +2,7 @@ import React from "react";
 import SentimentDissatisfiedRoundedIcon from "@mui/icons-material/SentimentDissatisfiedRounded";
 import { useNavigate } from "react-router";
 import GradationButton from "./GradationButton";
+import useLoginCheck from "../hooks/useLoginCheck";
 
 let errorMessage = {
   error_message: "원하시는 페이지를 찾을 수 없습니다.",
@@ -11,6 +12,8 @@ let errorMessage = {
 
 const ErrorPage = () => {
   const navigate = useNavigate();
+
+  useLoginCheck();
 
   return (
     <div className="nav_top_padding mobile_h_fit bg-white w-screen h-screen">

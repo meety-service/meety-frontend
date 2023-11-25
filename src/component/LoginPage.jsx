@@ -1,8 +1,12 @@
 import React from "react";
 import GoogleLoginButtonRenewal from "./GoogleLoginButtonRenewal";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import useLoginCheck from "../hooks/useLoginCheck";
 
 const LoginPage = () => {
+
+  useLoginCheck();
+  
   return (
     <div className={"mobile_h_fit w-screen h-screen bg-black"}>
       <div className="relative top-0 left-0 bg-[url('./assets/login_bg_image_sm.jpg')] md:bg-[url('./assets/login_bg_image_lg.jpg')] h-full bg-cover flex flex-col justify-center items-center">

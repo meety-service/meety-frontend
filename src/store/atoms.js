@@ -9,3 +9,8 @@ export const isSnackbarOpenAtom = atom({
     key: "IsSnackBarOpen",
     default: false
 })
+
+export const showNavbarAtom = atom({
+    key:"showNavbar",
+    default: false
+})

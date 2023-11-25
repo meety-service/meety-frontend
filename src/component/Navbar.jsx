@@ -5,12 +5,13 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
-import { getCookie, removeCookie } from "../utils/cookie";
+import { removeCookie } from "../utils/cookie";
 import { USER_TOKEN } from "../utils/constants";
-import { useRecoilCallback, useRecoilState } from "recoil";
-import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import { useRecoilCallback, useRecoilValue } from "recoil";
+import { isSnackbarOpenAtom, showNavbarAtom, snackbarMessageAtom } from "../store/atoms";
 
 const Navbar = () => {
+  const navbar = useRecoilValue(showNavbarAtom);
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   const navigate = useNavigate();
@@ -26,19 +27,7 @@ const Navbar = () => {
   const handleLogoutButtonClick = () => {
     console.log("Logout");
     removeCookie(USER_TOKEN);
-    console.log(getCookie(USER_TOKEN));
     navigate("/login");
-    /*
-    아래에서 페이지 새로 고침 하는 이유 
-    - app.js에서 
-      useEffect(() => {
-        setCurrPath(window.location.pathname);
-      })
-      코드가 useNavigate('/login')를 썼을 때 실행되지 않고, 새로고침 시에만 실행되어
-      <Navbar/>가 정상적으로 가려지기 때문
-    */
-    // TODO: 페이지 새로고침 없이 Navbar 숨김 처리 구현
-    location.reload();
   };
 
   const handleRevokeAccessButtonClick = () => {
@@ -52,7 +41,7 @@ const Navbar = () => {
     <>
       {/*상단 네비게이션 바*/}
       <div className="navbar">
-        <div className="fixed h-[60px] w-screen z-20 flex items-center justify-between px-3 bg-white shadow-lg">
+        <div className={`${navbar ? "" : "navbar-hide"} fixed h-[60px] w-screen z-20 flex items-center justify-between px-3 bg-white shadow-lg`}>
           <Link to="/" className="flex items-center space-x-3">
             <Icon width="80px" />
           </Link>
@@ -70,14 +59,14 @@ const Navbar = () => {
       <div
         onClick={showSidebar}
         className={`${
-          sidebar
+          navbar ? (sidebar
             ? "fixed bg-black w-screen h-screen flex justify-center z-30 bg-opacity-30 transition ease-in-out duration-300"
-            : "transition ease-out duration-300 bg-opacity-30"
+            : "transition ease-out duration-300 bg-opacity-30") : "navbar-hide"
         }`}
       ></div>
       <nav
         className={`nav-menu ${
-          sidebar ? "active" : ""
+          navbar ? (sidebar ? "active" : "") : "navbar-hide"
         } fixed bg-white w-3/5 md:w-1/4 h-screen flex justify-center z-30  rounded-tl-[20px] rounded-bl-[20px]`}
       >
         <div className="w-full h-full">
