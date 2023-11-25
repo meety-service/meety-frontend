@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { IndexedItemHeader } from "./";
-import { formatDate, formatTime } from "./VoteCreatePage";
+import { formatTime } from "./VoteCreatePage";
 
-const ScheduleList = ({ members, schedules }) => {
+const ScheduleList = ({ schedules }) => {
   const [isListOpen, setListOpen] = useState(
     Array(schedules.length).fill(false)
   );
@@ -25,10 +25,10 @@ const ScheduleList = ({ members, schedules }) => {
             className="flex w-full h-[40px] items-center border-b border-solid border-meety-component_outline_gray text-[15px] font-[700] pl-[6px]"
             onClick={() => handleListOpen(index)}
           >
-            {formatDate(schedule.date)}
+            {schedule.date}
           </button>
           {isListOpen[index] &&
-            schedule.times.map((time, index) => (
+            schedule.cases.map((element, index) => (
               <div
                 key={index}
                 className="flex h-[36px] justify-between items-center border-b border-solid border-meety-component_outline_gray px-[6px]"
@@ -37,12 +37,10 @@ const ScheduleList = ({ members, schedules }) => {
                   <IndexedItemHeader index={index} />
                   <div className="w-[6px]"></div>
                   <div className="text-[12px] font-[700]">
-                    {formatTime(time.time)}
+                    {formatTime(element.time)}
                   </div>
                 </div>
-                <div className="text-[12px]">
-                  {time.available.length}/{members} (명)
-                </div>
+                <div className="text-[12px]">{element.availMemRatio}</div>
               </div>
             ))}
         </div>
@@ -51,20 +49,14 @@ const ScheduleList = ({ members, schedules }) => {
   );
 };
 
-const memberPropTypes = PropTypes.shape({
-  nickname: PropTypes.string.isRequired,
-});
-
 ScheduleList.propTypes = {
-  members: PropTypes.number.isRequired,
   schedules: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string.isRequired,
-      times: PropTypes.arrayOf(
+      cases: PropTypes.arrayOf(
         PropTypes.shape({
           time: PropTypes.string.isRequired,
-          available: PropTypes.arrayOf(memberPropTypes).isRequired,
-          unavailable: PropTypes.arrayOf(memberPropTypes).isRequired,
+          availMemRatio: PropTypes.string.isRequired,
         }).isRequired
       ),
     })

@@ -13,8 +13,14 @@ import {
   OptionListItem,
   GradationButton,
 } from "./";
-import { getAllSchedules, getMeetingForm } from "../utils/axios";
+import {
+  createVoteForm,
+  getAllSchedules,
+  getMeetingForm,
+} from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
+import { getSortedMeetingInfo } from "../utils/meetingSort";
+import { calculateIntervals } from "./TimeSlot";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -24,11 +30,29 @@ const VoteCreatePage = () => {
   useLoginCheck();
 
   const [meetingForm, setMeetingForm] = useState({
-    available_dates: [],
+    meeting_dates: [],
     start_time: "00:00:00",
     end_time: "00:00:00",
     timezone: "",
   });
+
+  const [degrees, setDegrees] = useState([]);
+
+  const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
+  const [selectedMinHour, setSelectedMinHour] = useState(1);
+  const [sortedSchedules, setSortedSchedules] = useState([]);
+
+  const handleMinHourDropdown = (event) => {
+    setSelectedMinHour(event.target.value);
+    setSortedSchedules(
+      getSortedMeetingInfo(
+        { members, schedules },
+        meetingForm.start_time,
+        meetingForm.end_time,
+        selectedMinHour
+      ).schedules
+    );
+  };
 
   const [optionDate, setOptionDate] = useState("");
 
@@ -96,10 +120,47 @@ const VoteCreatePage = () => {
       await getAllSchedules(id).then((data) => {
         setMembers(data.members);
         setSchedules(data.schedules);
+        setSortedSchedules(
+          getSortedMeetingInfo(
+            { members, schedules },
+            meetingForm.start_time,
+            meetingForm.end_time,
+            selectedMinHour
+          ).schedules
+        );
       });
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { meeting_dates, start_time, end_time } = meetingForm;
+      const intervals = calculateIntervals(start_time, end_time);
+      const newDegrees = Array.from({ length: meeting_dates.length }, () =>
+        Array.from({ length: intervals }, () => 0)
+      );
+      schedules.forEach((schedule) => {
+        const i = meeting_dates.findIndex(
+          (meeting_date) => meeting_date.available_date === schedule.date
+        );
+        if (i === -1) {
+          return;
+        }
+
+        schedule.times.forEach((time) => {
+          const j = calculateIntervals(start_time, time.time);
+          if (j == intervals) {
+            return;
+          }
+
+          newDegrees[i][j] += time.available.length;
+        });
+      });
+      setDegrees(newDegrees);
+    };
+    fetchData();
+  }, [meetingForm, schedules]);
 
   return (
     <div className="nav_top_padding mobile_h_fit">
@@ -109,21 +170,50 @@ const VoteCreatePage = () => {
       <div className="ml-6 mt-4">
         <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       </div>
-      <TimeSlot
-        meetingForm={meetingForm}
-        members={members}
-        schedules={schedules}
-      />
+      <TimeSlot meetingForm={meetingForm} members={members} degrees={degrees} />
       <div className="mx-[20px]">
         <ListHeader
           title="가장 많이 겹치는 시간대는?"
           endComponent={
-            <button className="text-white" onClick={() => {}}>
+            <button
+              className="text-white"
+              onClick={() => {
+                setMinHourDropdownShown((prev) => !prev);
+              }}
+            >
               <TuneRoundedIcon />
             </button>
           }
         />
-        <ScheduleList members={members} schedules={schedules} />
+        {isMinHourDropdownShown && (
+          <div className="flex w-full h-[40px] justify-between items-center border-x border-b border-solid border-meety-component_outline_gray p-[6px]">
+            <div className="text-[11px] font-[700]">
+              적어도 몇 시간 이상 모여야 하나요?
+            </div>
+            <select
+              id="dropdown"
+              value={selectedMinHour}
+              onChange={handleMinHourDropdown}
+              className="text-[10px] font-[700]"
+            >
+              {Array(
+                Math.floor(
+                  calculateIntervals(
+                    meetingForm.start_time,
+                    meetingForm.end_time
+                  ) / 4
+                )
+              )
+                .fill()
+                .map((_, index) => (
+                  <option key={index} value={index + 1}>
+                    {index + 1} 시간
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}
+        <ScheduleList schedules={sortedSchedules} />
       </div>
       <div className="flex w-full justify-center py-[40px]">
         <KeyboardDoubleArrowDownRoundedIcon />
@@ -197,7 +287,8 @@ const VoteCreatePage = () => {
       <div className="h-[20px]" />
       <GradationButton
         text="투표 폼 생성하기"
-        onButtonClick={() => {
+        onButtonClick={async () => {
+          await createVoteForm(id, { vote_choices: groupByDate(voteOptions) });
           navigate(`/vote/fill/${id}`, { replace: true });
         }}
       />
