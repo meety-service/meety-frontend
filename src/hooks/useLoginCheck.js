@@ -1,26 +1,43 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosWH } from "../utils/axios";
-import { useRecoilState } from "recoil";
-import { showNavbarAtom } from "../store/atoms";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, showNavbarAtom, snackbarMessageAtom } from "../store/atoms";
 
 function useLoginCheck() {
   const navigate = useNavigate();
-  const [navbar, setNavbar] = useRecoilState(showNavbarAtom);
+
+  const setNavbar = useRecoilCallback(({ set }) => (bool) => {
+    set(showNavbarAtom, bool);
+  });
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   useEffect(() => {
     console.log("login check");
+
+    const currPath = window.location.pathname;
 
     const checkUserLoggedIn = async () => {
         // 쿠키에 저장된 refreshToken을 서버로 보내 사용자의 로그인 상태를 확인
         await axiosWH.get("/login/refresh").catch(function (error) {
             console.log(error);
             setNavbar(false);
-            navigate('/login'); // 에러 발생 시 로그인 페이지로 이동
+            if (currPath != '/login') {
+                navigate('/login');
+            } else {
+                setSnackbarText("로그인 과정에서 에러가 발생했습니다.");
+                openSnackbar(true);
+            }
         });
     };
 
-    const currPath = window.location.pathname;
     if (currPath == '/login') {
         setNavbar(false);
     } else {

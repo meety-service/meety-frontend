@@ -5,11 +5,12 @@ import GradationButton from "./GradationButton";
 import MainOptionButton from "./MainOptionButton";
 import { axiosWH } from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
-import { handleError } from "../utils/handleError";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [meetingInfo, setMeetingInfo] = useState([]);
+  const [error, handleError] = useState(undefined);
 
   // 사용자의 state 확인 후 어느 페이지로 이동할지 결정
   const getNavigationUrl = useCallback((id, state) => {
@@ -114,6 +115,7 @@ const MainPage = () => {
   };
 
   useLoginCheck(); // 로그인 여부 확인 -> 미 로그인 시 로그인 페이지로 이동
+  useErrorCheck(error);
 
   // 서버에서 미팅 정보 fetch
   useEffect(() => {

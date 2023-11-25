@@ -6,7 +6,6 @@ import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRigh
 import LogoutIcon from "@mui/icons-material/Logout";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
 import { removeCookie } from "../utils/cookie";
-import { USER_TOKEN } from "../utils/constants";
 import { useRecoilCallback, useRecoilValue } from "recoil";
 import { isSnackbarOpenAtom, showNavbarAtom, snackbarMessageAtom } from "../store/atoms";
 
@@ -26,7 +25,7 @@ const Navbar = () => {
 
   const handleLogoutButtonClick = () => {
     console.log("Logout");
-    removeCookie(USER_TOKEN);
+    removeCookie(process.env.REACT_APP_USER_TOKEN);
     navigate("/login");
   };
 
