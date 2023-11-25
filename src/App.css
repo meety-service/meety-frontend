@@ -16,7 +16,7 @@
 
 .nav-menu {
   right: -100%;
-  transition: 300ms;
+  /* transition: 300ms;*/
 }
 
 .nav-menu.active {
@@ -101,4 +101,9 @@
   height: 0;
   overflow: hidden;
   transition: 0.2s;
+}
+
+.navbar-hide {
+  height: 0;
+  overflow: hidden;
 }

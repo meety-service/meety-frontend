@@ -12,7 +12,7 @@ const MeetingConfirmedPage = () => {
   const { id } = useParams();
   const [confirmedMeetingInfo, setConfirmedMeetingInfo] = useState([]);
 
-  useLoginCheck(); // 로그인 여부 확인 -> 미 로그인 시 로그인 페이지로 이동
+  useLoginCheck();
 
   // 서버에서 확정된 미팅 날짜 조회
   useEffect(() => {
