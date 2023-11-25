@@ -1,15 +1,14 @@
 import axios from "axios";
 import { getCookie } from "./cookie";
-import { TEST_SERVER_BASE_URL, USER_TOKEN } from "./constants";
 
 // axios에 해더 정보를 미리 저장
 export const axiosWH = axios.create({
-  baseURL: TEST_SERVER_BASE_URL,  // TODO: 실제 서버 URL로 변경
+  baseURL: process.env.REACT_APP_SERVER_BASE_URL,
   timeout: 5000,
   headers: {
    "Content-Type": "application/json",
    "Access-Control-Allow-Origin": "*",
-   Cookie: `${USER_TOKEN}=${getCookie(USER_TOKEN)};`
+   Cookie: `${process.env.REACT_APP_USER_TOKEN}=${getCookie(process.env.REACT_APP_USER_TOKEN)};`
  },
  withCredentials: true,
  responseType: "json",
