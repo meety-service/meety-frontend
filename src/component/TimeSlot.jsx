@@ -1,36 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 
-const TimeSlot = ({ meetingForm, members, schedules, isDraggable = false }) => {
+const TimeSlot = ({ meetingForm, members, degrees, isDraggable = false }) => {
   const { meeting_dates, start_time, end_time, timezone } = meetingForm;
   const intervals = calculateIntervals(start_time, end_time);
   const offset = calculateOffset(start_time);
-
-  const [degrees, setDegrees] = useState([]);
-
-  useEffect(() => {
-    const newDegrees = Array.from({ length: meeting_dates.length }, () =>
-      Array.from({ length: intervals }, () => 0)
-    );
-
-    schedules.forEach((schedule) => {
-      const i = meeting_dates.findIndex(
-        (meeting_date) => meeting_date.available_date === schedule.date
-      );
-      if (i === -1) {
-        return;
-      }
-
-      schedule.times.forEach((time) => {
-        const j = calculateIntervals(start_time, time.time);
-        for (let k = 0; k < 2; k++) {
-          newDegrees[i][j + k] = time.available.length;
-        }
-      });
-    });
-
-    setDegrees(newDegrees);
-  }, [meetingForm, members, schedules]);
 
   return (
     <div>
@@ -64,24 +38,25 @@ const TimeSlot = ({ meetingForm, members, schedules, isDraggable = false }) => {
                 {formatWeekday(available_date)}
               </div>
               <div>
-                {Array.from({ length: intervals }, (_, j) => {
-                  const opacity =
-                    degrees.length === meeting_dates.length &&
-                    degrees[i].length === intervals
-                      ? degrees[i][j] / members
-                      : 0;
-
-                  return (
+                {Array.from({ length: intervals }, (_, j) => (
+                  <div
+                    key={j}
+                    className={
+                      "relative w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
+                      (j !== 0 && j % 4 === offset ? " border-t-black" : "")
+                    }
+                  >
                     <div
-                      key={j}
-                      className={
-                        "w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
-                        (j !== 0 && j % 4 === offset ? " border-t-black" : "")
-                      }
-                      style={{ opacity: 1 - opacity }}
+                      className="absolute top-0 left-0 w-[44px] h-[9px] bg-[#0000ff]"
+                      style={{
+                        opacity:
+                          degrees[i] && degrees[i][j]
+                            ? degrees[i][j] / members
+                            : 0,
+                      }}
                     />
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           );
@@ -103,26 +78,8 @@ TimeSlot.propTypes = {
     timezone: PropTypes.string.isRequired,
   }).isRequired,
   members: PropTypes.number.isRequired,
-  schedules: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      times: PropTypes.arrayOf(
-        PropTypes.shape({
-          time: PropTypes.string.isRequired,
-          available: PropTypes.arrayOf(
-            PropTypes.shape({
-              nickname: PropTypes.string.isRequired,
-            })
-          ).isRequired,
-          unavailable: PropTypes.arrayOf(
-            PropTypes.shape({
-              nickname: PropTypes.string.isRequired,
-            })
-          ).isRequired,
-        }).isRequired
-      ),
-    })
-  ).isRequired,
+  degrees: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired))
+    .isRequired,
   isDraggable: PropTypes.bool,
 };
 

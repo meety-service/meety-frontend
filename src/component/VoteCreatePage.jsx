@@ -36,6 +36,8 @@ const VoteCreatePage = () => {
     timezone: "",
   });
 
+  const [degrees, setDegrees] = useState([]);
+
   const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
   const [selectedMinHour, setSelectedMinHour] = useState(1);
   const [sortedSchedules, setSortedSchedules] = useState([]);
@@ -131,6 +133,35 @@ const VoteCreatePage = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const { meeting_dates, start_time, end_time } = meetingForm;
+      const intervals = calculateIntervals(start_time, end_time);
+      const newDegrees = Array.from({ length: meeting_dates.length }, () =>
+        Array.from({ length: intervals }, () => 0)
+      );
+      schedules.forEach((schedule) => {
+        const i = meeting_dates.findIndex(
+          (meeting_date) => meeting_date.available_date === schedule.date
+        );
+        if (i === -1) {
+          return;
+        }
+
+        schedule.times.forEach((time) => {
+          const j = calculateIntervals(start_time, time.time);
+          if (j == intervals) {
+            return;
+          }
+
+          newDegrees[i][j] += time.available.length;
+        });
+      });
+      setDegrees(newDegrees);
+    };
+    fetchData();
+  }, [meetingForm, schedules]);
+
   return (
     <div className="nav_top_padding mobile_h_fit">
       <div className="ml-4 mt-8">
@@ -139,11 +170,7 @@ const VoteCreatePage = () => {
       <div className="ml-6 mt-4">
         <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       </div>
-      {/* <TimeSlot
-        meetingForm={meetingForm}
-        members={members}
-        schedules={schedules}
-      /> */}
+      <TimeSlot meetingForm={meetingForm} members={members} degrees={degrees} />
       <div className="mx-[20px]">
         <ListHeader
           title="가장 많이 겹치는 시간대는?"
