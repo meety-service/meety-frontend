@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Icon } from "../assets/logo.svg";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
@@ -7,11 +7,21 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
 import { getCookie, removeCookie } from "../utils/cookie";
 import { USER_TOKEN } from "../utils/constants";
+import { useRecoilCallback, useRecoilState } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const Navbar = () => {
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   const navigate = useNavigate();
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const handleLogoutButtonClick = () => {
     console.log("Logout");
@@ -34,6 +44,8 @@ const Navbar = () => {
   const handleRevokeAccessButtonClick = () => {
     console.log("Revoke Access");
     // TODO: 회원 탈퇴 기능 추가
+    setSnackbarText("현재 회원 탈퇴 기능을 이용하실 수 없습니다.");
+    openSnackbar();
   };
 
   return (
