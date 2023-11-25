@@ -90,3 +90,15 @@
 .Dropdown-arrow {
   background-color: #cfcfcf;
 }
+
+.snackbar-fade-in {
+    opacity: 1;
+    transition: 0.2s;
+}
+
+.snackbar-hide {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: 0.2s;
+}
