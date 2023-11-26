@@ -22,6 +22,7 @@ import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
 import { calculateIntervals } from "./TimeSlot";
+import { dateParser } from "../utils/dateParser";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -59,22 +60,8 @@ const VoteCreatePage = () => {
   };
 
   const [optionDate, setOptionDate] = useState("");
-
-  const changeDate = (event) => {
-    setOptionDate(event.target.value);
-  };
-
   const [optionStartTime, setOptionStartTime] = useState("");
-
-  const changeStart = (event) => {
-    setOptionStartTime(event.target.value);
-  };
-
   const [optionEndTime, setOptionEndTime] = useState("");
-
-  const changeEnd = (event) => {
-    setOptionEndTime(event.target.value);
-  };
 
   const [voteOptions, setVoteOptions] = useState([]);
 
@@ -84,26 +71,44 @@ const VoteCreatePage = () => {
       start_time: "16:00:00",
       end_time: "18:00:00",
     };
+
+    if (
+      voteOptions.some(
+        (option) =>
+          option.date === newOption.date &&
+          option.start_time === newOption.start_time &&
+          option.end_time === newOption.end_time
+      )
+    ) {
+      return;
+    }
+
     setVoteOptions((options) => [...options, newOption]);
   };
 
   const addVoteOption = () => {
     if (optionDate === "" || optionStartTime === "" || optionEndTime === "") {
       return;
-    } else if (optionStartTime >= optionEndTime) {
-      alert("시작 시간이 종료 시간보다 늦습니다.");
-      return;
     }
 
     const newOption = {
       date: optionDate,
-      start_time: optionStartTime + ":00",
-      end_time: optionEndTime + ":00",
+      start_time: optionStartTime,
+      end_time: optionEndTime,
     };
+
+    if (
+      voteOptions.some(
+        (option) =>
+          option.date === newOption.date &&
+          option.start_time === newOption.start_time &&
+          option.end_time === newOption.end_time
+      )
+    ) {
+      return;
+    }
+
     setVoteOptions((options) => [...options, newOption]);
-    setOptionDate("");
-    setOptionStartTime("");
-    setOptionEndTime("");
   };
 
   const removeVoteOption = (index) => {
@@ -138,7 +143,25 @@ const VoteCreatePage = () => {
         selectedMinCellCount
       ).schedules
     );
+    setOptionDate(meetingForm.meeting_dates[0]?.available_date ?? "");
   }, [members, schedules, meetingForm, selectedMinCellCount]);
+
+  useEffect(() => {
+    const optionStartTimeList = getOptionStartTimeList(
+      sortedSchedules,
+      optionDate
+    );
+    setOptionStartTime(optionStartTimeList?.[0] ?? "");
+  }, [sortedSchedules, optionDate]);
+
+  useEffect(() => {
+    const optionEndTimeList = getOptionEndTimeList(
+      sortedSchedules,
+      optionDate,
+      optionStartTime
+    );
+    setOptionEndTime(optionEndTimeList?.[0] ?? "");
+  }, [sortedSchedules, optionDate, optionStartTime]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -235,19 +258,61 @@ const VoteCreatePage = () => {
         <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
           <div className="flex justify-between px-[8px] py-[4px]">
             <div className="text-[14px] font-[700]">(1) 날짜를 입력하세요.</div>
-            <input type="date" value={optionDate} onChange={changeDate} />
+            <select
+              id="dropdown"
+              value={optionDate}
+              onChange={(event) => setOptionDate(event.target.value)}
+              className="text-[14px] font-[700]"
+            >
+              {meetingForm.meeting_dates.map((meeting_date) => (
+                <option
+                  key={meeting_date.available_date}
+                  value={meeting_date.available_date}
+                >
+                  {meeting_date.available_date}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex justify-between px-[8px] py-[4px]">
             <div className="text-[14px] font-[700]">
               (2) 시작 시간을 입력하세요.
             </div>
-            <input type="time" value={optionStartTime} onChange={changeStart} />
+            <select
+              id="dropdown"
+              value={optionStartTime}
+              onChange={(event) => setOptionStartTime(event.target.value)}
+              className="text-[14px] font-[700]"
+            >
+              {getOptionStartTimeList(sortedSchedules, optionDate)?.map(
+                (time, index) => (
+                  <option key={index} value={time}>
+                    {formatTime(time)}
+                  </option>
+                )
+              )}
+            </select>
           </div>
           <div className="flex justify-between px-[8px] py-[4px]">
             <div className="text-[14px] font-[700]">
               (3) 종료 시간을 입력하세요.
             </div>
-            <input type="time" value={optionEndTime} onChange={changeEnd} />
+            <select
+              id="dropdown"
+              value={optionEndTime}
+              onChange={(event) => setOptionEndTime(event.target.value)}
+              className="text-[14px] font-[700]"
+            >
+              {getOptionEndTimeList(
+                sortedSchedules,
+                optionDate,
+                optionStartTime
+              )?.map((time, index) => (
+                <option key={index} value={time}>
+                  {formatTime(time)}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
             <button
@@ -364,6 +429,62 @@ const flattenWithDate = (groupedArray) => {
 
     return result;
   }, []);
+};
+
+const getOptionStartTimeList = (sortedSchedules, optionDate) => {
+  const result = [];
+
+  sortedSchedules
+    .find((schedule) => schedule.date === dateParser(optionDate))
+    ?.cases.forEach((element) => {
+      const [start, end] = element.time.split(" ~ ");
+      const [sh, sm] = start.split(":").map(Number);
+      const [eh, em] = end.split(":").map(Number);
+      const s = Math.floor((sh * 60 + sm) / 15);
+      const e = Math.floor((eh * 60 + em) / 15);
+
+      Array(e - s)
+        .fill()
+        .forEach((_, index) => {
+          const n = (s + index) * 15;
+          const h = Math.floor(n / 60);
+          const m = n % 60;
+          const time = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:00`;
+          result.push(time);
+        });
+    });
+
+  return result;
+};
+
+const getOptionEndTimeList = (sortedSchedules, optionDate, optionStartTime) => {
+  const time = sortedSchedules
+    .find((schedule) => schedule.date === dateParser(optionDate))
+    ?.cases.find((element) => {
+      const [start, end] = element.time.split(" ~ ");
+      return optionStartTime >= start + ":00" && optionStartTime < end + ":00";
+    })?.time;
+
+  if (time === undefined) {
+    return [];
+  }
+
+  const [_, end] = time.split(" ~ ");
+  const [sh, sm] = optionStartTime.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  const s = Math.floor((sh * 60 + sm) / 15) + 1;
+  const e = Math.floor((eh * 60 + em) / 15) + 1;
+
+  return Array(e - s)
+    .fill()
+    .map((_, index) => {
+      const n = (s + index) * 15;
+      const h = Math.floor(n / 60);
+      const m = n % 60;
+      const time = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:00`;
+      return time;
+    })
+    .filter((e) => e > optionStartTime);
 };
 
 export default VoteCreatePage;
