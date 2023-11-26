@@ -38,15 +38,14 @@ export const getCellCount = (millisec) => {
  * @param {object} input - 요일별 전체 미팅 셀 데이터 (Object)
  * @param {string} startTime - 미팅 시작 시간 문자열 ("hh:mm:ss")
  * @param {string} endTime - 미팅 끝 시간 문자열 ("hh:mm:ss")
- * @param {number} minHour - 최소 시간 (Int)
+ * @param {number} minCellCount - 최소 셀 개수 (Int)
  * @returns {object} - 요일별 가장 많이 겹치는 시간대 데이터 (Object)
  */
-export const getSortedMeetingInfo = (input, startTime, endTime, minHour) => {
+export const getSortedMeetingInfo = (input, startTime, endTime, minCellCount) => {
 
     const cellCount = getCellCount(getMillisecondsBetweenTimes(startTime, endTime));  // 총 셀 개수
     const dayCount = input.schedules.length;  // 총 요일 수
     const memberCount = input.members;        // 참여한 총 멤버 수
-    const minCellCount = minHour * 4;         // ex) 최소 1시간 -> 최소 셀 개수 : 4개 (15 * 4)
 
     let intervalStart = "00:00:00";    // Interval 시작 시간
     let intervalEnd = "00:00:00";      // Interval 종료 시간

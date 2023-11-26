@@ -21,7 +21,7 @@ import {
   SubMessage,
   ListHeader,
   GradationButton,
-  TimeSlot,
+  DragBar,
 } from "./";
 
 const MeetingFillPage = () => {
@@ -31,11 +31,12 @@ const MeetingFillPage = () => {
 
   useLoginCheck();
 
-  const { timezone, selectedDates, startTime, endTime } = location.state;
+  const { selectedDates, startTime, endTime } = location.state || {}; // selectedDates가 null인 경우 기본값 설정
+  const timezone = location.state?.timezone || "기본 타임존"; // timezone이 null인 경우 기본값 설정
 
   // 각 날짜에 대해 슬라이더 값을 저장하는 상태 만들기
   const [sliderValues, setSliderValues] = useState(
-    selectedDates.map(() => ({ min: startTime, max: endTime }))
+    selectedDates?.map(() => ({ min: startTime, max: endTime })) || []
   );
 
   const handleSliderChange = (index) => (value) => {
@@ -87,6 +88,20 @@ const MeetingFillPage = () => {
       });
   };
 
+  // const fetchTimezones = async () => {
+  //   const data = {
+  //     user_state: info.user_state,
+  //   };
+  //   await axiosWH
+  //     .get("/timezones")
+  //         setTimezones(response.data); // 가져온 데이터를 timezones 상태에 설정
+  //     .then((response) => {
+  //         })
+  //         .catch(function (error) {
+  //       handleError(error);
+  //     });
+  // };
+
   return (
     <div className="nav_top_padding mobile_h_fit p-[14px]">
       <PageTitle title="미팅 폼 작성하기" />
@@ -101,8 +116,8 @@ const MeetingFillPage = () => {
       <StepTitle title="표준시(Time Zone)" />
       <div className="border border-gray-200 rounded p-2">{timezone}</div>
 
-      {/* <div className="flex flex-row">
-        {selectedDates.map((date, index) => (
+      <div className="flex flex-row">
+        {selectedDates?.map((date, index) => (
           <div key={index}>
             <div className="text-xl">
               {date.toLocaleDateString("en-US", {
@@ -113,17 +128,17 @@ const MeetingFillPage = () => {
             <div className="text-lg">
               {date.toLocaleDateString("en-US", { weekday: "short" })}
             </div>
-            <ReactSlider
+            <DragBar
               min={startTime}
               max={endTime}
               step={15}
-              value={[sliderValues[index].min, sliderValues[index].max]}
+              value={[sliderValues[index]?.min, sliderValues[index]?.max]}
               onChange={handleSliderChange(index)}
               className="react-slider h-full w-1 absolute top-0 left-1/2 transform -rotate-90 origin-center bg-blue-500"
             />
           </div>
         ))}
-      </div> */}
+      </div>
       <StepTitle title="3.미팅 폼 작성이 모두 끝나셨나요?" />
       <SubMessage title="아래의 제출 버튼을 클릭하여 다른 사람들에게 내 미팅 가능 시간을 공유하고, 다른 사람들의 미팅 가능 시간을 확인할 수 있습니다." />
 
