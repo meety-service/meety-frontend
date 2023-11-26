@@ -8,9 +8,10 @@ import {
   GradationButton,
   SubMessage,
 } from "./";
-import { getMeetingInfo, getVoteChoices } from "../utils/axios";
+import { closeVoteForm, getMeetingInfo, getVoteChoices } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 
 const VoteViewPage = () => {
   const { id } = useParams();
@@ -18,6 +19,9 @@ const VoteViewPage = () => {
   const navigate = useNavigate();
 
   useLoginCheck();
+
+  const [error, handleError] = useState(undefined);
+  useErrorCheck(error);
 
   const [meetingInfo, setMeetingInfo] = useState([]);
 
@@ -27,10 +31,10 @@ const VoteViewPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getMeetingInfo(id).then((data) => {
+      await getMeetingInfo(id, handleError).then((data) => {
         setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
       });
-      await getVoteChoices(id).then((data) => {
+      await getVoteChoices(id, handleError).then((data) => {
         setMembers(data.members);
         setParticipants(data.participants);
 
@@ -114,7 +118,8 @@ const VoteViewPage = () => {
           <div>미팅 일자: 10월 6일 (금) 16:30 ~ 18:00</div>
           <GradationButton
             text="투표 마감하기"
-            onButtonClick={() => {
+            onButtonClick={async () => {
+              await closeVoteForm(id, handleError);
               navigate(`/meeting/confirmed/${id}`, { replace: true });
             }}
           />
