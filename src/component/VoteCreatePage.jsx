@@ -19,6 +19,7 @@ import {
   getMeetingForm,
 } from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
 import { calculateIntervals } from "./TimeSlot";
 
@@ -28,6 +29,9 @@ const VoteCreatePage = () => {
   const navigate = useNavigate();
 
   useLoginCheck();
+
+  const [error, handleError] = useState(undefined);
+  useErrorCheck(error);
 
   const [meetingForm, setMeetingForm] = useState({
     meeting_dates: [],
@@ -114,10 +118,10 @@ const VoteCreatePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getMeetingForm(id).then((data) => {
+      await getMeetingForm(id, handleError).then((data) => {
         setMeetingForm(data);
       });
-      await getAllSchedules(id).then((data) => {
+      await getAllSchedules(id, handleError).then((data) => {
         setMembers(data.members);
         setSchedules(data.schedules);
         setSortedSchedules(
@@ -288,7 +292,11 @@ const VoteCreatePage = () => {
       <GradationButton
         text="투표 폼 생성하기"
         onButtonClick={async () => {
-          await createVoteForm(id, { vote_choices: groupByDate(voteOptions) });
+          await createVoteForm(
+            id,
+            { vote_choices: groupByDate(voteOptions) },
+            handleError
+          );
           navigate(`/vote/fill/${id}`, { replace: true });
         }}
       />

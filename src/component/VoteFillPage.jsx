@@ -18,6 +18,7 @@ import {
 } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 
 const VoteFillPage = () => {
   const { id } = useParams();
@@ -25,6 +26,9 @@ const VoteFillPage = () => {
   const navigate = useNavigate();
 
   useLoginCheck();
+
+  const [error, handleError] = useState(undefined);
+  useErrorCheck(error);
 
   const [meetingInfo, setMeetingInfo] = useState([]);
 
@@ -45,13 +49,13 @@ const VoteFillPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getMeetingInfo(id).then((data) => {
+      await getMeetingInfo(id, handleError).then((data) => {
         setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
       });
-      await getMeetingForm(id).then((data) => {
+      await getMeetingForm(id, handleError).then((data) => {
         setTimezone(data.timezone);
       });
-      await getVoteChoices(id).then((data) => {
+      await getVoteChoices(id, handleError).then((data) => {
         setMembers(data.members);
         setParticipants(data.participants);
         setVoteOptions(data.vote_choices);
@@ -129,9 +133,9 @@ const VoteFillPage = () => {
             }));
 
           if (meetingInfo.user_state === 2) {
-            await submitVotes(id, { vote_choices: vote_choices });
+            await submitVotes(id, { vote_choices: vote_choices }, handleError);
           } else if (meetingInfo.user_state === 3) {
-            await editVotes(id, { vote_choices: vote_choices });
+            await editVotes(id, { vote_choices: vote_choices }, handleError);
           } else {
             throw new Error("unexpected user_state");
           }
