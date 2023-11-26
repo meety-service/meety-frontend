@@ -43,17 +43,17 @@ const VoteCreatePage = () => {
   const [degrees, setDegrees] = useState([]);
 
   const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
-  const [selectedMinHour, setSelectedMinHour] = useState(1);
+  const [selectedMinCellCount, setSelectedMinCellCount] = useState(1);
   const [sortedSchedules, setSortedSchedules] = useState([]);
 
   const handleMinHourDropdown = (event) => {
-    setSelectedMinHour(event.target.value);
+    setSelectedMinCellCount(event.target.value);
     setSortedSchedules(
       getSortedMeetingInfo(
         { members, schedules },
         meetingForm.start_time,
         meetingForm.end_time,
-        selectedMinHour
+        event.target.value
       ).schedules
     );
   };
@@ -124,18 +124,21 @@ const VoteCreatePage = () => {
       await getAllSchedules(id, handleError).then((data) => {
         setMembers(data.members);
         setSchedules(data.schedules);
-        setSortedSchedules(
-          getSortedMeetingInfo(
-            { members, schedules },
-            meetingForm.start_time,
-            meetingForm.end_time,
-            selectedMinHour
-          ).schedules
-        );
       });
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setSortedSchedules(
+      getSortedMeetingInfo(
+        { members, schedules },
+        meetingForm.start_time,
+        meetingForm.end_time,
+        selectedMinCellCount
+      ).schedules
+    );
+  }, [members, schedules, meetingForm, selectedMinCellCount]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,10 +199,12 @@ const VoteCreatePage = () => {
             </div>
             <select
               id="dropdown"
-              value={selectedMinHour}
+              value={selectedMinCellCount}
               onChange={handleMinHourDropdown}
               className="text-[10px] font-[700]"
             >
+              <option value={1}>15분</option>
+              <option value={2}>30분</option>
               {Array(
                 Math.floor(
                   calculateIntervals(
@@ -210,8 +215,8 @@ const VoteCreatePage = () => {
               )
                 .fill()
                 .map((_, index) => (
-                  <option key={index} value={index + 1}>
-                    {index + 1} 시간
+                  <option key={index} value={4 * (index + 1)}>
+                    {index + 1}시간
                   </option>
                 ))}
             </select>
