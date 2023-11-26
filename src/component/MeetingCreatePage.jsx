@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useParams } from "react";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import Dropdown from "react-dropdown";
@@ -7,6 +7,11 @@ import "react-dropdown/style.css";
 import "../App.css";
 import timezones from "../utils/timezone.js";
 import { Route, Link, BrowserRouter, useNavigate } from "react-router-dom";
+import useLoginCheck from "../hooks/useLoginCheck";
+import { useErrorCheck } from "../hooks/useErrorCheck";
+import { handleError } from "../utils/handleError";
+import axios from "axios";
+import { axiosWH } from "../utils/axios";
 
 import {
   PageTitle,
@@ -17,6 +22,11 @@ import {
 } from "./";
 
 const CustomDatePicker = ({ selected, onChange }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useLoginCheck();
+
   const handleDateChange = (date) => {
     if (selected && selected.getTime() === date.getTime()) {
       onChange(null);
@@ -126,6 +136,27 @@ const MeetingCreatePage = () => {
       } else {
         onChange(date);
       }
+    };
+
+    const handleCreateMeeting = () => {
+      // 중복 선택한 날짜들과 드롭다운 값들을 서버에 보내는 로직
+      const data = {
+        selectedDates: selectedDates,
+        selectedOption1: _onSelect1,
+        selectedOption2: _onSelect2,
+        selectedOption3: _onSelect3,
+      };
+
+      axios
+        .post("/meetings", data)
+        .then((response) => {
+          // 서버 응답을 처리하는 로직
+          console.log(response.data);
+        })
+        .catch((error) => {
+          // 에러 처리
+          handleError(error);
+        });
     };
 
     return (
