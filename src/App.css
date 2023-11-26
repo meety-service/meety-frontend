@@ -35,35 +35,47 @@
   transition-duration: 300ms;
 }
 
-/*아래는 미팅 폼 생성 페이지 관련*/
+
+
 .react-datepicker {
-  /*달력 전체*/
-  width: 300px;
-  height: 245px;
+  width: 100%;
+  height: 290px;
+  border-radius: 20px !important;
 }
 
-.react-datepicker__month-container .react-datepicker__header {
-  background-color: #4777f1;
-  color: #cfcfcf;
+.react-datepicker__month-container {
+  width: 100%;
+  border-radius: 30px;
+  color: white;
 }
 
 .react-datepicker__current-month {
-  font-size: 1rem;
-  color: #000;
+  color: red; /* 원하는 색상을 지정하세요 */
 }
 
-.react-datepicker__day-name,
-.react-datepicker__day {
-  width: 2.3rem;
-  line-height: 2.5rem;
+.react-datepicker__month-container .react-datepicker__header {
+  width: 100%;
 }
 
-.react-datepicker__day--sunday {
-  color: red; /* 일요일 색 조정 */
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
+  color:#FFFFFF;
+  font-size: 18px;
 }
 
-.react-datepicker__day--saturday {
-  color: blue; /* 토요일 색 조정 */
+.react-datepicker__month-container .react-datepicker__header {
+  border-radius: 15px 15px 0px 0px;
+  padding: 0px;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__current-month{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 15px 15px 0px 0px;
+  background: linear-gradient(45deg, #779CF9, #1550E8);
 }
 
 .react-datepicker__day {
@@ -80,6 +92,42 @@
   background-color: #4777f1 !important;
   color: white !important;
 }
+
+
+
+.react-datepicker__month-container .react-datepicker__header {
+  background-color: #FFFFFF;
+  font-weight: bold;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
+  color: black;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:first-child {
+  color: red;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:last-child {
+  color: blue;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__current-month {
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.react-datepicker__day--sun {
+  color: red; /* 원하는 색상을 지정하세요 */
+}
+
+/* 토요일의 글자 색을 변경합니다 */
+.react-datepicker__day--sat {
+  color: blue; /* 원하는 색상을 지정하세요 */
+}
+
+
 
 .Dropdown-control {
   width: 250px;

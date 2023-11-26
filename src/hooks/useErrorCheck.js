@@ -84,10 +84,6 @@ export const useErrorCheck = (error) => {
                 }
             }
             console.log(error.config);
-            console.log("Error case 4");
-            setErrorTitle("알 수 없는 에러가 발생했습니다.");
-            setErrorContent("나중에 다시 시도해주세요.");
-            navigate('/error');
         }
     }, [error]);
 }
