@@ -54,7 +54,39 @@ const TimeSlot = ({ meetingForm, members, degrees, isSelectable = false }) => {
           {timezone}
         </div>
       </div>
-      <div className="flex">
+      <div className="flex my-4">
+        <div className="relative flex flex-col w-12 items-center text-[8px] font-[700]">
+          <div className="absolute top-[28px] right-0">
+            {calculateTimeAfterIntervals(start_time, 0)}
+          </div>
+          {offset !== 0 && (
+            <div
+              className="absolute right-0"
+              style={{ top: `${28 + 11 * offset}px` }}
+            >
+              {calculateTimeAfterIntervals(start_time, offset)}
+            </div>
+          )}
+          {Array(Math.floor((intervals - offset) / 4))
+            .fill()
+            .map((_, i) => (
+              <div
+                key={i}
+                className="absolute right-0"
+                style={{ top: `${28 + 11 * (4 * (i + 1) + offset)}px` }}
+              >
+                {calculateTimeAfterIntervals(start_time, 4 * (i + 1) + offset)}
+              </div>
+            ))}
+          {(intervals - offset) % 4 !== 0 && (
+            <div
+              className="absolute right-0"
+              style={{ top: `${28 + 11 * intervals}px` }}
+            >
+              {calculateTimeAfterIntervals(start_time, intervals)}
+            </div>
+          )}
+        </div>
         {meeting_dates.map((meeting_date, i) => {
           const { available_date } = meeting_date;
           const weekday = new Date(available_date).getDay();
@@ -164,7 +196,19 @@ export const calculateIntervals = (startTime, endTime) => {
 
 const calculateOffset = (startTime) => {
   const startMinutes = timeToMinutes(startTime);
-  return Math.floor((startMinutes / 15) % 4);
+  return (4 - (Math.floor(startMinutes / 15) % 4)) % 4;
+};
+
+const calculateTimeAfterIntervals = (startTime, intervals) => {
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = startMinutes + intervals * 15;
+  let hours = Math.floor(endMinutes / 60);
+  const minutes = endMinutes % 60;
+  const period = hours < 12 ? "AM" : "PM";
+  if (hours > 12) hours -= 12;
+  return `${hours < 10 ? "0" : ""}${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes} ${period}`;
 };
 
 export default TimeSlot;
