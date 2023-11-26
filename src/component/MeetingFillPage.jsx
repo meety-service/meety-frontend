@@ -74,9 +74,9 @@ const MeetingFillPage = () => {
   };
 
   const onSubmitButtonClick = async (info) => {
-    const data = {
-      user_state: info.user_state,
-    };
+      const data = {
+        user_state: info.user_state,
+      };
     await axiosWH
       .post(`/meetings/${id}/schedule`, data)
       .then((response) => {

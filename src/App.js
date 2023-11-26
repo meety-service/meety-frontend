@@ -5,6 +5,8 @@ import { Navbar, MainPage, LoginPage, MeetingCreatePage, MeetingFillPage, Meetin
 import { CookiesProvider } from 'react-cookie';
 import { RecoilRoot } from 'recoil';
 import Snackbar from './component/Snackbar';
+import MeetingCreatePage2 from './component/MeetingCreatePage2';
+import MeetingFillPage2 from './component/MeetingFillPage2';
 
 function setScreenSize() {
   let vh = window.innerHeight * 0.01;
@@ -27,6 +29,10 @@ function App() {
             <Routes>
               <Route exact path="/" element={<MainPage />} />
               <Route path="/login" element={<LoginPage />} />
+
+              <Route path="/meeting/create2" element={<MeetingCreatePage2 />} />
+              <Route path="/meeting/fill2/:id" element={<MeetingFillPage2 />} />
+
               <Route path="/meeting/create" element={<MeetingCreatePage />} />
               <Route path="/meeting/fill/:id" element={<MeetingFillPage />} />
               <Route path="/meeting/view/:id" element={<MeetingViewPage />} />

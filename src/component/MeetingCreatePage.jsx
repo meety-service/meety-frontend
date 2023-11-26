@@ -1,4 +1,4 @@
-import React, { useState, useParams } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import Dropdown from "react-dropdown";
@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-dropdown/style.css";
 import "../App.css";
 import timezones from "../utils/timezone.js";
-import { Route, Link, BrowserRouter, useNavigate } from "react-router-dom";
+import { Route, Link, BrowserRouter, useNavigate, useParams } from "react-router-dom";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
 import { handleError } from "../utils/handleError";
