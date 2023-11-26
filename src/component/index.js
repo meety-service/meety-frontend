@@ -15,11 +15,11 @@ export { default as PageTitle } from "./PageTitle";
 export { default as StepTitle } from "./StepTitle";
 export { default as SubMessage } from "./SubMessage";
 export { default as TimeSlot } from "./TimeSlot";
+export { default as DragBar } from "./DragBar";
 export { default as ListHeader } from "./ListHeader";
 export { default as ScheduleList } from "./ScheduleList";
 export { default as OptionListItem } from "./OptionListItem";
 export { default as IndexedItemHeader } from "./IndexedItemHeader";
 
 export { default as GradationButton } from "./GradationButton";
-export { default as MainOptionButton } from "./MainOptionButton"; 
-
+export { default as MainOptionButton } from "./MainOptionButton";
