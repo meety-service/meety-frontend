@@ -1,4 +1,4 @@
-import React, { useState, useParams } from "react";
+import React, { useState, useEffect, useParams } from "react";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import Dropdown from "react-dropdown";
@@ -6,11 +6,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-dropdown/style.css";
 import "../App.css";
 import timezones from "../utils/timezone.js";
-import { Route, Link, BrowserRouter, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Link,
+  BrowserRouter,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
 import { handleError } from "../utils/handleError";
-import axios from "axios";
+import { mapTimezonesToIds } from "../utils/mapTimezonesToIds";
 import { axiosWH } from "../utils/axios";
 
 import {
@@ -53,8 +59,27 @@ CustomDatePicker.propTypes = {
 };
 
 const MeetingCreatePage = () => {
-  const [selectedDates, setSelectedDates, highlightDates, setHighlightedDates] =
-    useState([]);
+  const location = useLocation();
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [highlightDates, setHighlightedDates] = useState([]);
+  const [selectedTimeZone, setSelectedTimeZone] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const country_options = [...timezones];
+  const time_options = [];
+  for (let hour = 0; hour <= 23; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const time = `${hour.toString().padStart(2, "0")}:${minute
+        .toString()
+        .padStart(2, "0")}`;
+      time_options.push(time);
+    }
+  }
+  const defaultOption = time_options[0];
+  const [time2, setTime2] = useState(null);
+  const [time3, setTime3] = useState(null);
+  const navigate = useNavigate();
+
   const handleDateChange = (date) => {
     if (
       selectedDates.some(
@@ -78,33 +103,16 @@ const MeetingCreatePage = () => {
       setSelectedDates([...selectedDates, date]);
     }
   };
-  const [inputValue, setInputValue] = useState("");
-  const navigate = useNavigate();
+
   const handleInputChange = (event) => {
-    //input값이 변경될 때마다 호출됨
     setInputValue(event.target.value);
   };
-
-  const [isOpen, setIsOpen] = useState(false);
-  const country_options = [...timezones];
-  const time_options = [];
-  for (let hour = 0; hour <= 23; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const time = `${hour.toString().padStart(2, "0")}:${minute
-        .toString()
-        .padStart(2, "0")}`;
-      time_options.push(time);
-    }
-  }
-  const defaultOption = time_options[0]; //드롭다운
-  const [selectedTimeZone, setSelectedTimeZone] = useState("");
-  const [time2, setTime2] = useState(null);
-  const [time3, setTime3] = useState(null);
 
   const _onSelect1 = (selectedOption) => {
     console.log(`Selected option: ${selectedOption}`);
     // 선택된 옵션에 대한 처리
   };
+
   const _onSelect2 = (selectedOption) => {
     setTime2(selectedOption.value);
     const [hour, minute] = selectedOption.value.split(":").map(Number);
@@ -129,52 +137,6 @@ const MeetingCreatePage = () => {
     setSelectedTimeZone(event.target.value);
   };
 
-  const CustomDatePicker = ({ selected, onChange }) => {
-    const handleDateChange = (date) => {
-      if (selected && selected.getTime() === date.getTime()) {
-        onChange(null);
-      } else {
-        onChange(date);
-      }
-    };
-
-    const handleCreateMeeting = () => {
-      // 중복 선택한 날짜들과 드롭다운 값들을 서버에 보내는 로직
-      const data = {
-        selectedDates: selectedDates,
-        selectedOption1: _onSelect1,
-        selectedOption2: _onSelect2,
-        selectedOption3: _onSelect3,
-      };
-
-      axios
-        .post("/meetings", data)
-        .then((response) => {
-          // 서버 응답을 처리하는 로직
-          console.log(response.data);
-        })
-        .catch((error) => {
-          // 에러 처리
-          handleError(error);
-        });
-    };
-
-    return (
-      <DatePicker
-        selected={selected}
-        onChange={handleDateChange}
-        dateFormat="yyyy/MM/dd"
-        inline
-      />
-    );
-  };
-
-  CustomDatePicker.propTypes = {
-    selected: PropTypes.instanceOf(Date),
-    onChange: PropTypes.func.isRequired,
-    highlightDates: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
-  };
-
   const [selectedStartValue, setSelectedStartValue] = useState(0);
   const [selectedEndValue, setSelectedEndValue] = useState(0);
   const [selectedValue, setSelectedValue] = useState(0);
@@ -183,6 +145,36 @@ const MeetingCreatePage = () => {
     const [hours, minutes] = time.split(":").map(Number);
     return hours * 60 + minutes;
   }
+  const timezoneIds = mapTimezonesToIds();
+  const timezoneId = timezoneIds[selectedTimeZone];
+
+  const handleCreateMeeting = () => {
+    const data = {
+      name: inputValue,
+      available_dates: selectedDates.map((date) => ({
+        date: date.toISOString().split("T")[0],
+      })),
+      start_time: time2,
+      end_time: time3,
+      timezone_id: timezoneId,
+    };
+
+    axiosWH
+      .post("/meetings", data)
+      .then((response) => {
+        console.log(response.data);
+        navigate(`/meeting/fill/${response.data.id}`);
+      })
+      .catch((error) => {
+        handleError(error);
+      });
+  };
+
+  useEffect(() => {
+    if (location.state && location.state.timezone) {
+      setSelectedTimeZone(location.state.timezone);
+    }
+  }, [location.state]);
 
   return (
     <div className="nav_top_padding mobile_h_fit p-[14px] bg-white w-screen h-screen">
@@ -214,7 +206,6 @@ const MeetingCreatePage = () => {
             placeholder="Select an option"
           />
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}></div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Dropdown
             options={time_options}
@@ -259,19 +250,9 @@ const MeetingCreatePage = () => {
 
           <StepTitle title="4.미팅을 생성할 준비가 되셨나요?" />
           <SubMessage title="미팅 폼 생성하기 버튼을 클릭하면 다음 페이지에서 링크를 통해 미팅 폼을 다른 사람들에게 공유할 수 있습니다." />
-
           <GradationButton
             text="미팅 폼 생성하기"
-            onButtonClick={() => {
-              navigate("/meeting/fill/:id", {
-                state: {
-                  timezone: selectedTimeZone,
-                  selectedDates,
-                  startTime: timeToMinutes(time2),
-                  endTime: timeToMinutes(time3),
-                },
-              });
-            }}
+            onButtonClick={handleCreateMeeting}
           />
         </div>
       </div>
