@@ -1,10 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-const TimeSlot = ({ meetingForm, members, degrees, isDraggable = false }) => {
+const TimeSlot = ({ meetingForm, members, degrees, isSelectable = false }) => {
   const { meeting_dates, start_time, end_time, timezone } = meetingForm;
   const intervals = calculateIntervals(start_time, end_time);
   const offset = calculateOffset(start_time);
+
+  const [startRow, setStartRow] = useState(-1);
+  const [startCol, setStartCol] = useState(-1);
+  const [selected, setSelected] = useState(
+    Array(meeting_dates.length).fill(Array(intervals).fill(false))
+  );
+
+  const handleClick = (row, col) => {
+    if (startRow === -1 && startCol === -1) {
+      setStartRow(row);
+      setStartCol(col);
+      return;
+    } else if (startRow !== -1 && startCol !== -1) {
+      const value = selected[startRow][startCol];
+      const rs = Math.min(startRow, row);
+      const re = Math.max(startRow, row);
+      const cs = Math.min(startCol, col);
+      const ce = Math.max(startCol, col);
+
+      const newSelected = selected.map((e) => [...e]);
+      for (let i = rs; i <= re; i++) {
+        for (let j = cs; j <= ce; j++) {
+          newSelected[i][j] = !value;
+        }
+      }
+      setSelected(newSelected);
+
+      setStartRow(-1);
+      setStartCol(-1);
+      return;
+    }
+    throw new Error("unexpected click");
+  };
+
+  useEffect(() => {
+    const { meeting_dates, start_time, end_time } = meetingForm;
+    const intervals = calculateIntervals(start_time, end_time);
+    setSelected(Array(meeting_dates.length).fill(Array(intervals).fill(false)));
+  }, [meetingForm]);
 
   return (
     <div>
@@ -45,14 +84,30 @@ const TimeSlot = ({ meetingForm, members, degrees, isDraggable = false }) => {
                       "relative w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
                       (j !== 0 && j % 4 === offset ? " border-t-black" : "")
                     }
+                    onClick={() => {
+                      if (!isSelectable) return;
+                      handleClick(i, j);
+                    }}
                   >
                     <div
-                      className="absolute top-0 left-0 w-[44px] h-[9px] bg-[#0000ff]"
+                      className={
+                        "absolute top-0 left-0 w-[44px] h-[9px]" +
+                        (isSelectable
+                          ? i === startRow && j === startCol
+                            ? " bg-black"
+                            : " bg-[#00ff00]"
+                          : " bg-[#0000ff]")
+                      }
                       style={{
-                        opacity:
-                          degrees[i] && degrees[i][j]
-                            ? degrees[i][j] / members
-                            : 0,
+                        opacity: isSelectable
+                          ? i === startRow && j === startCol
+                            ? 0.5
+                            : selected[i] && selected[i][j]
+                            ? 1
+                            : 0
+                          : degrees[i] && degrees[i][j]
+                          ? degrees[i][j] / members
+                          : 0,
                       }}
                     />
                   </div>
@@ -80,7 +135,7 @@ TimeSlot.propTypes = {
   members: PropTypes.number.isRequired,
   degrees: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired))
     .isRequired,
-  isDraggable: PropTypes.bool,
+  isSelectable: PropTypes.bool,
 };
 
 const formatDate = (dateString) => {
