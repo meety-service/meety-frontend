@@ -1,4 +1,0 @@
-{
-	"meetings" : [{"id" : 1, "name" : "소공 1차 회의", "isMaster" : 1, "user_state" : 1},
-				  {"id" : 2, "name" : "프로젝트 2차 설계회의", "isMaster" : 0, "user_state" : 2}]
-}
