@@ -23,7 +23,7 @@ const VoteViewPage = () => {
   const [error, handleError] = useState(undefined);
   useErrorCheck(error);
 
-  const [meetingInfo, setMeetingInfo] = useState([]);
+  const [meetingInfo, setMeetingInfo] = useState({});
 
   const [members, setMembers] = useState(0);
   const [participants, setParticipants] = useState(0);
@@ -106,9 +106,7 @@ const VoteViewPage = () => {
       <SubMessage title="할 수 있습니다." />
       <GradationButton
         text="다시 투표하기"
-        onButtonClick={() => {
-          navigate(`/vote/fill/${id}`);
-        }}
+        onButtonClick={() => navigate(`/vote/fill/${id}`)}
       />
       {meetingInfo.isMaster && (
         <div>
