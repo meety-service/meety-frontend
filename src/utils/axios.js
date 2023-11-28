@@ -35,7 +35,12 @@ export const getMeetingForm = async (id, handleError) => {
       const data = response.data;
       const timezone = await getTimezone(data.timezone_id, handleError);
       return {
-        meeting_dates: data.meeting_dates,
+        // available_date를 기준으로 오름차순 정렬한다.
+        meeting_dates: data.meeting_dates.sort((a, b) => {
+          const dateA = new Date(a.available_date);
+          const dateB = new Date(b.available_date);
+          return dateA - dateB;
+        }),
         start_time: data.start_time,
         end_time: data.end_time,
         timezone: timezone,
@@ -64,12 +69,16 @@ export const editSchedules = async (id, body, handleError) => {
     });
 };
 
-export const getMySchedules = async (id, handleError) => {
+export const getMySchedules = async (id, handleError, isModifying = false) => {
   return await axiosWH
     .get(`/meetings/${id}/schedule`)
     .then((response) => response.data)
     .catch(function (error) {
-      handleError(error);
+      if (!isModifying) {
+        handleError(error);
+      } else {
+        null
+      }
     });
 };
 
@@ -119,8 +128,9 @@ export const editVotes = async (id, body, handleError) => {
 };
 
 export const closeVoteForm = async (id, handleError) => {
+  const data = {"close": 1}
   return await axiosWH
-    .patch(`/meetings/${id}/vote`)
+    .patch(`/meetings/${id}/vote`, data)
     .then((response) => response.data)
     .catch(function (error) {
       handleError(error);

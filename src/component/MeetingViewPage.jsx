@@ -115,88 +115,102 @@ const MeetingViewPage = () => {
   }, [members, schedules, meetingForm, selectedMinCellCount]);
 
   return (
-    <div className="nav_top_padding mobile_h_fit">
-      <div className="ml-4 mt-8">
-        <PageTitle title="미팅 폼 작성 완료" />
-      </div>
-      <div className="ml-6 mt-4">
-        <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
-      </div>
-      <TimeSlot meetingForm={meetingForm} members={members} degrees={degrees} />
-      <div className="mx-[20px]">
-        <ListHeader
-          title="가장 많이 겹치는 시간대는?"
-          endComponent={
-            <button
-              className="text-white"
-              onClick={() => {
-                setMinHourDropdownShown((prev) => !prev);
-              }}
-            >
-              <TuneRoundedIcon />
-            </button>
-          }
-        />
-        {isMinHourDropdownShown && (
-          <div className="flex w-full h-[40px] justify-between items-center border-x border-b border-solid border-meety-component_outline_gray p-[6px]">
-            <div className="text-[11px] font-[700]">
-              적어도 몇 시간 이상 모여야 하나요?
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
+      <div className="relative flex flex-col justify-center items-center w-full h-full">
+        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
+            <div className="w-full pb-4">
+              <PageTitle title="미팅 폼 작성 완료" />
             </div>
-            <select
-              id="dropdown"
-              value={selectedMinCellCount}
-              onChange={handleMinHourDropdown}
-              className="text-[10px] font-[700]"
-            >
-              <option value={1}>15분</option>
-              <option value={2}>30분</option>
-              {Array(
-                Math.floor(
-                  calculateIntervals(
-                    meetingForm.start_time,
-                    meetingForm.end_time
-                  ) / 4
-                )
-              )
-                .fill()
-                .map((_, index) => (
-                  <option key={index} value={4 * (index + 1)}>
-                    {index + 1}시간
-                  </option>
-                ))}
-            </select>
+            <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
+
+            <TimeSlot
+              meetingForm={meetingForm}
+              members={members}
+              degrees={degrees}
+            />
+            <div className="mt-3 shadow-md shadow-stone-400 rounded-t-[10px]">
+              <ListHeader
+                title="가장 많이 겹치는 시간대는?"
+                endComponent={
+                  <button
+                    className="text-white"
+                    onClick={() => {
+                      setMinHourDropdownShown((prev) => !prev);
+                    }}
+                  >
+                    <TuneRoundedIcon />
+                  </button>
+                }
+              />
+              {isMinHourDropdownShown && (
+                <div className="flex w-full h-[40px] justify-between items-center border-solid border-x-[1.5px] border-b-[2px] border-meety-component_outline_gray p-[6px] text-meety-text_dark_gray">
+                  <div className="text-xs font-bold pl-1">
+                    적어도 몇 시간 이상 모여야 하나요?
+                  </div>
+                  <select
+                    id="dropdown"
+                    value={selectedMinCellCount}
+                    onChange={handleMinHourDropdown}
+                    className="text-xs font-bold"
+                  >
+                    <option value={1}>15분</option>
+                    <option value={2}>30분</option>
+                    {Array(
+                      Math.floor(
+                        calculateIntervals(
+                          meetingForm.start_time,
+                          meetingForm.end_time
+                        ) / 4
+                      )
+                    )
+                      .fill()
+                      .map((_, index) => (
+                        <option key={index} value={4 * (index + 1)}>
+                          {index + 1}시간
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+              <ScheduleList schedules={sortedSchedules} />
+            </div>
+            <div className="mt-4 h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
+              <StepTitle title="2. 혹시 수정할 내용이 있으신가요?" />
+              <SubMessage title="아래의 '수정하기'버튼을 클릭하여 이전에 작성했던 미팅 폼을 수정할 수 있습니다." />
+            </div>
+
+            <GradationButton
+              text="수정하기"
+              onButtonClick={() => navigate(`/meeting/fill/${id}`)}
+            />
+            {meetingInfo.isMaster && (
+              <div>
+                <div className="h-20 flex flex-col justify-center items-center">
+                  <KeyboardDoubleArrowDownRoundedIcon
+                    style={{ fill: "#BFBCC6" }}
+                  />
+                </div>
+
+                <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
+                  <StepTitle title="3.투표를 진행할까요?" />
+                  <SubMessage title="아래의 '투표 진행하기 버튼을 클릭하여 미팅 폼 작성을 마감하고," />
+                  <SubMessage title="최종 미팅 일자 결정을 위한 투표 폼을 생성할 수 있습니다." />
+                </div>
+                <GradationButton
+                  text="투표 진행하기"
+                  onButtonClick={() => navigate(`/vote/create/${id}`)}
+                />
+                <div className="h-[40px]" />
+              </div>
+            )}
           </div>
-        )}
-        <ScheduleList schedules={sortedSchedules} />
-      </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <div className="ml-6">
-        <StepTitle title="2. 혹시 수정할 내용이 있으신가요?" />
-      </div>
-      <SubMessage title="아래의 '수정하기'버튼을 클릭하여 이전에 작성했던 미팅 폼을 수정할 수 있습니다." />
-      <div className="h-[20px]" />
-      <GradationButton
-        text="수정하기"
-        onButtonClick={() => navigate(`/meeting/fill/${id}`)}
-      />
-      {meetingInfo.isMaster && (
-        <div>
-          <div className="h-[40px]" />
-          <div className="ml-6">
-            <StepTitle title="3.투표를 진행할까요?" />
-          </div>
-          <SubMessage title="아래의 '투표 진행하기 버튼을 클릭하여 미팅 폼 작성을 마감하고," />
-          <SubMessage title="최종 미팅 일자 결정을 위한 투표 폼을 생성할 수 있습니다." />
-          <div className="h-[20px]" />
-          <GradationButton
-            text="투표 진행하기"
-            onButtonClick={() => navigate(`/vote/create/${id}`)}
-          />
-          <div className="h-[40px]" />
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -37,7 +37,7 @@ const MainPage = () => {
       .then((response) => {
         if (response.status == 200) {
           console.log("미팅 삭제 완료");
-          fetchMeetingInfo();  // 서버에서 data 다시 fetch
+          fetchMeetingInfo(); // 서버에서 data 다시 fetch
         }
       })
       .catch(function (error) {
@@ -52,7 +52,7 @@ const MainPage = () => {
       .then((response) => {
         if (response.status == 200) {
           console.log("리스트에서 삭제 완료");
-          fetchMeetingInfo();  // 서버에서 data 다시 fetch
+          fetchMeetingInfo(); // 서버에서 data 다시 fetch
         }
       })
       .catch(function (error) {
@@ -78,7 +78,6 @@ const MainPage = () => {
         handleError(error);
       });
   };
-  
 
   // 리스트 옵션 버튼 클릭 후 해당 미팅 페이지로 이동
   const onOptionButtonClick = async (info) => {
@@ -126,37 +125,37 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="nav_top_padding mobile_h_fit bg-white w-screen h-screen">
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-screen">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
-        <div className="absolute top-8 left-4">
-          <PageTitle title="내 미팅" />
-        </div>
-        <div className="w-full h-full flex flex-col justify-center items-center px-5 pt-20 pb-28">
-          {/*옵션 스크롤 바*/}
-          <div className="w-full md:w-2/5 h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
-            <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
-              {meetingInfo.map((info) => (
-                <MainOptionButton
-                  key={info.id}
-                  info={info}
-                  text={info.name}
-                  isMaster={info.isMaster}
-                  onOptionButtonClick={() => {
-                    onOptionButtonClick(info);
-                  }}
-                  onHandleDeleteButtonClick={() => {
-                    onHandleDeleteButtonClick(info);
-                  }}
-                  onHandleRemoveFromListButtonClick={() => {
-                    onHandleRemoveFromListButtonClick(info);
-                  }}
-                />
-              ))}
+        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+          <div className="relative flex flex-col justify-center space-y-2 w-full h-full md:w-2/5 py-2 px-2 rounded-xl">
+            <div className="w-full pb-4">
+              <PageTitle title="미팅 폼 작성하기" />
             </div>
-          </div>
-        </div>
-        <div className="absolute h-[60px] w-full bottom-0 left-0">
-          <div className="absolute bottom-0 px-5 mb-7 w-full h-full ">
+            <div className="w-full h-full flex flex-col justify-center items-center pb-8">
+              {/*옵션 스크롤 바*/}
+              <div className="w-full h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
+                <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
+                  {meetingInfo.map((info) => (
+                    <MainOptionButton
+                      key={info.id}
+                      info={info}
+                      text={info.name}
+                      isMaster={info.isMaster}
+                      onOptionButtonClick={() => {
+                        onOptionButtonClick(info);
+                      }}
+                      onHandleDeleteButtonClick={() => {
+                        onHandleDeleteButtonClick(info);
+                      }}
+                      onHandleRemoveFromListButtonClick={() => {
+                        onHandleRemoveFromListButtonClick(info);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
             <GradationButton
               text={"새로운 미팅 생성하기"}
               onButtonClick={() => navigate("/meeting/create")}
