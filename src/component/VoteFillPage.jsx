@@ -8,17 +8,20 @@ import {
   ListHeader,
   IndexedItemHeader,
   GradationButton,
+  TimeSlot,
 } from "./";
 import {
-  editVotes,
-  getMeetingForm,
   getMeetingInfo,
+  getMeetingForm,
+  getAllSchedules,
   getVoteChoices,
   submitVotes,
+  editVotes,
 } from "../utils/axios";
 import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
+import { calculateIntervals } from "./TimeSlot";
 
 const VoteFillPage = () => {
   const { id } = useParams();
@@ -30,12 +33,21 @@ const VoteFillPage = () => {
   const [error, handleError] = useState(undefined);
   useErrorCheck(error);
 
-  const [meetingInfo, setMeetingInfo] = useState([]);
+  const [meetingInfo, setMeetingInfo] = useState({});
 
-  const [timezone, setTimezone] = useState("");
+  const [meetingForm, setMeetingForm] = useState({
+    meeting_dates: [],
+    start_time: "00:00:00",
+    end_time: "00:00:00",
+    timezone: "",
+  });
   const [members, setMembers] = useState(0);
+  const [schedules, setSchedules] = useState([]);
+  const [degrees, setDegrees] = useState([]);
+
   const [participants, setParticipants] = useState(0);
   const [voteOptions, setVoteOptions] = useState([]);
+  const [myVotes, setMyVotes] = useState([]);
 
   const [isSelected, setSelected] = useState(
     Array(voteOptions.length).fill(false)
@@ -53,16 +65,59 @@ const VoteFillPage = () => {
         setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
       });
       await getMeetingForm(id, handleError).then((data) => {
-        setTimezone(data.timezone);
+        setMeetingForm(data);
+      });
+      await getAllSchedules(id, handleError).then((data) => {
+        setMembers(data.members);
+        setSchedules(data.schedules);
       });
       await getVoteChoices(id, handleError).then((data) => {
-        setMembers(data.members);
         setParticipants(data.participants);
         setVoteOptions(data.vote_choices);
+        setMyVotes(data.user_choices);
       });
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const { meeting_dates, start_time, end_time } = meetingForm;
+    const intervals = calculateIntervals(start_time, end_time);
+    const newDegrees = Array.from({ length: meeting_dates.length }, () =>
+      Array.from({ length: intervals }, () => 0)
+    );
+    schedules.forEach((schedule) => {
+      const i = meeting_dates.findIndex(
+        (meeting_date) => meeting_date.available_date === schedule.date
+      );
+      if (i === -1) {
+        return;
+      }
+
+      schedule.times.forEach((time) => {
+        const j = calculateIntervals(start_time, time.time);
+        if (j == intervals) {
+          return;
+        }
+
+        newDegrees[i][j] += time.available.length;
+      });
+    });
+    setDegrees(newDegrees);
+  }, [meetingForm, schedules]);
+
+  useEffect(() => {
+    myVotes.forEach((vote) => {
+      const i = voteOptions.findIndex((element) => element.id === vote.id);
+      if (i === -1) {
+        return;
+      }
+
+      const newSelected = [...isSelected];
+      newSelected[i] = true;
+      setSelected(newSelected);
+    });
+  }, [myVotes]);
 
   return (
     <div className="nav_top_padding mobile_h_fit">
@@ -71,9 +126,7 @@ const VoteFillPage = () => {
           <button
             className="text-[14px] text-right underline"
             onClick={async () =>
-              await navigator.clipboard.writeText(
-                `http://localhost:3000/vote/fill/${id}`
-              )
+              await navigator.clipboard.writeText(window.location.href)
             }
           >
             <div>링크 복사하기</div>
@@ -86,8 +139,12 @@ const VoteFillPage = () => {
       <div className="ml-[20px] mt-[20px]">
         <StepTitle title="1. 내 미팅 가능 시간을 확인해보세요." />
       </div>
-      <div className="text-[12px] font-[700] text-right">
-        표준시 (Time Zone) {timezone}
+      <div className="mx-[36px] my-[12px]">
+        <TimeSlot
+          meetingForm={meetingForm}
+          members={members}
+          degrees={degrees}
+        />
       </div>
       <div className="mx-[20px]">
         <ListHeader title="미팅을 원하는 시간대를 선택하세요." />
