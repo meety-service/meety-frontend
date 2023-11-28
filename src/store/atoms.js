@@ -12,7 +12,7 @@ export const isSnackbarOpenAtom = atom({
 
 export const showNavbarAtom = atom({
     key:"showNavbar",
-    default: false
+    default: true
 })
 
 export const errorTitleAtom = atom({

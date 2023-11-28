@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 
 const SubMessage = ({ title }) => {
   return (
-    <div className="text-[10px] font-[700] text-meety-exp_text_gray">
+    <p className="text-[10px] font-medium text-meety-exp_text_gray leading-[0.5rem] pl-5">
       {title}
-    </div>
+    </p>
   );
 };
 
