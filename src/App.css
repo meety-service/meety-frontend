@@ -8,6 +8,10 @@
   padding-top: 60px;
 }
 
+.nav_top_margin {
+  margin-top: 60px;
+}
+
 .mobile_h_fit {
   height: calc(var(--vh, 1vh) * 100);
 }
@@ -35,27 +39,50 @@
   transition-duration: 300ms;
 }
 
-
-
 .react-datepicker {
   width: 100%;
-  height: 290px;
-  border-radius: 20px !important;
+  height: fit;
+  border: none !important;
+  border-radius: 15px 15px 5px 5px !important;
+  box-shadow: 3px 3px 3px #b5b5b5;
 }
 
 .react-datepicker__month-container {
   width: 100%;
-  border-radius: 30px;
+  padding-bottom: 5px;
   color: white;
 }
 
-.react-datepicker__current-month {
-  color: red; /* 원하는 색상을 지정하세요 */
+.react-datepicker .react-datepicker__navigation {
+  height: 20%;
+  color: #FFFFFF;
 }
 
-.react-datepicker__month-container .react-datepicker__header {
-  width: 100%;
+.react-datepicker__month-container .react-datepicker__month {
+  margin: 0px;
 }
+
+.react-datepicker__month-container .react-datepicker__month .react-datepicker__week {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+.react-datepicker__month-container .react-datepicker__month .react-datepicker__day {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  background: white;
+  height:30px;
+  border-radius: 3px;
+  font-size: 18px;
+  align-items: center;
+  font-weight: bold;
+  background: #E6E6E6;
+  box-shadow: 2px 3px 2px #d9d9d9;
+}
+
 
 .react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
   color:#FFFFFF;
@@ -63,8 +90,8 @@
 }
 
 .react-datepicker__month-container .react-datepicker__header {
-  border-radius: 15px 15px 0px 0px;
   padding: 0px;
+  border-radius: 15px 15px 5px 5px !important;
 }
 
 .react-datepicker__month-container .react-datepicker__header .react-datepicker__current-month{
@@ -98,10 +125,49 @@
 .react-datepicker__month-container .react-datepicker__header {
   background-color: #FFFFFF;
   font-weight: bold;
+  width: 100%;
+  border-bottom: #FFFFFF;
 }
 
 .react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
   color: black;
+  width: 100%;
+  font-size: medium
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-names {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(1):after {
+  content: "n";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(2):after {
+  content: "n";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(3):after {
+  content: "e";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(4):after {
+  content: "d";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(5):after {
+  content: "r";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(6):after {
+  content: "i";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(7):after {
+  content: "t";
 }
 
 .react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:first-child {
@@ -188,4 +254,35 @@
 
 .login-fade-in-btn {
   animation: fadeIn 0.5s ease-in;
+}
+
+.Dropdown-root .Dropdown-control {
+  width: 100%;
+  font-weight: bold;
+  color: #4D4D4D;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  box-shadow: 2px 3px 2px #d9d9d9;
+  border: 2px solid #CFCFCF;
+}
+
+.Dropdown-root.is-open .Dropdown-control {
+  width: 100%;
+  border-radius: 5px 5px 0px 0px;
+  border-top: 2px solid #CFCFCF;
+  border-left: 2px solid #CFCFCF;
+  border-right: 2px solid #CFCFCF;
+}
+
+.Dropdown-root .Dropdown-menu {
+  font-size: small;
+  font-weight: medium;
+  color: #4D4D4D;
+  width: 100%;
+  border-radius: 0px 0px 5px 5px;
+  border-left: 2px solid #CFCFCF;
+  border-right: 2px solid #CFCFCF;
+  border-bottom: 2px solid #CFCFCF;
+  background-color: #FAFAFA;
 }
