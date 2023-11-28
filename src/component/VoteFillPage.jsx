@@ -66,20 +66,26 @@ const VoteFillPage = () => {
 
   return (
     <div className="nav_top_padding mobile_h_fit">
-      <div className="flex justify-end">
-        <button
-          className="text-[14px] text-right underline"
-          onClick={async () => {
-            await navigator.clipboard.writeText(
-              `http://localhost:3000/vote/fill/${id}`
-            );
-          }}
-        >
-          <div>링크 복사하기</div>
-        </button>
+      <div className="relative">
+        <div className="absolute top-[12px] right-[12px] flex justify-end">
+          <button
+            className="text-[14px] text-right underline"
+            onClick={async () =>
+              await navigator.clipboard.writeText(
+                `http://localhost:3000/vote/fill/${id}`
+              )
+            }
+          >
+            <div>링크 복사하기</div>
+          </button>
+        </div>
       </div>
-      <PageTitle title="투표 폼 작성하기" />
-      <StepTitle title="1. 내 미팅 가능 시간을 확인해보세요." />
+      <div className="ml-[16px] mt-[32px]">
+        <PageTitle title="투표 폼 작성하기" />
+      </div>
+      <div className="ml-[20px] mt-[20px]">
+        <StepTitle title="1. 내 미팅 가능 시간을 확인해보세요." />
+      </div>
       <div className="text-[12px] font-[700] text-right">
         표준시 (Time Zone) {timezone}
       </div>
