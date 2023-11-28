@@ -47,15 +47,15 @@ const TimeSlot = ({ meetingForm, members, degrees, isSelectable = false }) => {
 
   return (
     <div>
-      <div className="flex justify-end items-center text-[12px] font-[700] text-right my-4">
+      <div className="flex justify-end items-center text-[12px] font-[700] text-right mb-[20px]">
         <div>표준시 (Time Zone)</div>
         <div className="w-[6px]" />
         <div className="flex w-[142px] h-[26px] items-center border border-solid border-meety-component_outline_gray rounded-[5px] px-[6px]">
           {timezone}
         </div>
       </div>
-      <div className="flex my-4">
-        <div className="relative flex flex-col w-12 items-center text-[8px] font-[700]">
+      <div className="flex justify-center my-4">
+        <div className="relative flex flex-col w-12 items-center text-[8px] font-[700] mr-[6px]">
           <div className="absolute top-[28px] right-0">
             {calculateTimeAfterIntervals(start_time, 0)}
           </div>

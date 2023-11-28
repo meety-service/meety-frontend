@@ -194,14 +194,21 @@ const VoteCreatePage = () => {
 
   return (
     <div className="nav_top_padding mobile_h_fit">
-      <div className="ml-4 mt-8">
+      <div className="ml-[16px] mt-[32px]">
         <PageTitle title="투표 폼 생성하기" />
       </div>
-      <div className="ml-6 mt-4">
+      <div className="ml-[20px] mt-[20px]">
         <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
       </div>
-      <TimeSlot meetingForm={meetingForm} members={members} degrees={degrees} />
-      <div className="mx-[20px]">
+      <div className="mx-[36px] my-[12px]">
+        <TimeSlot
+          meetingForm={meetingForm}
+          members={members}
+          degrees={degrees}
+        />
+      </div>
+      <div className="h-[20px]" />
+      <div className="mx-[36px]">
         <ListHeader
           title="가장 많이 겹치는 시간대는?"
           endComponent={
@@ -250,13 +257,13 @@ const VoteCreatePage = () => {
       <div className="flex w-full justify-center py-[40px]">
         <KeyboardDoubleArrowDownRoundedIcon />
       </div>
-      <div className="ml-6">
+      <div className="ml-[20px]">
         <StepTitle title="2. 투표지를 만들어보세요." />
       </div>
-      <div className="m-[20px]">
+      <div className="mt-[12px] mx-[36px]">
         <ListHeader title="투표 선택지를 추가해보세요." />
         <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
-          <div className="flex justify-between px-[8px] py-[4px]">
+          <div className="flex justify-between p-[8px]">
             <div className="text-[14px] font-[700]">(1) 날짜를 입력하세요.</div>
             <select
               id="dropdown"
@@ -274,7 +281,7 @@ const VoteCreatePage = () => {
               ))}
             </select>
           </div>
-          <div className="flex justify-between px-[8px] py-[4px]">
+          <div className="flex justify-between p-[8px]">
             <div className="text-[14px] font-[700]">
               (2) 시작 시간을 입력하세요.
             </div>
@@ -293,7 +300,7 @@ const VoteCreatePage = () => {
               )}
             </select>
           </div>
-          <div className="flex justify-between px-[8px] py-[4px]">
+          <div className="flex justify-between p-[8px]">
             <div className="text-[14px] font-[700]">
               (3) 종료 시간을 입력하세요.
             </div>
@@ -314,7 +321,7 @@ const VoteCreatePage = () => {
               ))}
             </select>
           </div>
-          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
+          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg mx-[10px] mt-[20px] mb-[12px]">
             <button
               className="w-full h-full font-[700] text-white"
               onClick={addVoteOption}
@@ -332,7 +339,7 @@ const VoteCreatePage = () => {
           </div>
         </div>
       </div>
-      <div className="mx-[20px]">
+      <div className="mx-[36px] mt-[34px]">
         <ListHeader title="다음과 같이 투표를 진행합니다." />
         {voteOptions.map((option, index) => (
           <OptionListItem
@@ -353,24 +360,26 @@ const VoteCreatePage = () => {
       <div className="flex w-full justify-center py-[40px]">
         <KeyboardDoubleArrowDownRoundedIcon />
       </div>
-      <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
-      <div className="px-[40px]">
+      <div className="ml-[20px] mt-[20px]">
+        <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
+      </div>
+      <div className="mx-[48px] mt-[8px]">
         <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
         <SubMessage title="투표 폼을 다른 사람들에게 공유할 수 있습니다." />
       </div>
-      <div className="h-[20px]" />
-      <GradationButton
-        text="투표 폼 생성하기"
-        onButtonClick={async () => {
-          await createVoteForm(
-            id,
-            { vote_choices: groupByDate(voteOptions) },
-            handleError
-          );
-          navigate(`/vote/fill/${id}`, { replace: true });
-        }}
-      />
-      <div className="h-[40px]" />
+      <div className="pt-[20px] pb-[28px] px-[20px]">
+        <GradationButton
+          text="투표 폼 생성하기"
+          onButtonClick={async () => {
+            await createVoteForm(
+              id,
+              { vote_choices: groupByDate(voteOptions) },
+              handleError
+            );
+            navigate(`/vote/fill/${id}`, { replace: true });
+          }}
+        />
+      </div>
     </div>
   );
 };
