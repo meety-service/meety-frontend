@@ -30,11 +30,11 @@ function App() {
               <Route exact path="/" element={<MainPage />} />
               <Route path="/login" element={<LoginPage />} />
 
-              <Route path="/meeting/create2" element={<MeetingCreatePage2 />} />
-              <Route path="/meeting/fill2/:id" element={<MeetingFillPage2 />} />
+              <Route path="/meeting/create_old" element={<MeetingCreatePage />} />
+              <Route path="/meeting/fill_old/:id" element={<MeetingFillPage />} />
 
-              <Route path="/meeting/create" element={<MeetingCreatePage />} />
-              <Route path="/meeting/fill/:id" element={<MeetingFillPage />} />
+              <Route path="/meeting/create" element={<MeetingCreatePage2 />} />
+              <Route path="/meeting/fill/:id" element={<MeetingFillPage2 />} />
               <Route path="/meeting/view/:id" element={<MeetingViewPage />} />
               <Route path="/vote/create/:id" element={<VoteCreatePage />} />
               <Route path="/vote/fill/:id" element={<VoteFillPage />} />
