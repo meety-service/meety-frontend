@@ -8,7 +8,9 @@ export const axiosWH = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    Cookie: `${process.env.REACT_APP_USER_TOKEN}=${getCookie(process.env.REACT_APP_USER_TOKEN)};`,
+    Cookie: `${process.env.REACT_APP_USER_TOKEN}=${getCookie(
+      process.env.REACT_APP_USER_TOKEN
+    )};`,
   },
   withCredentials: true,
   responseType: "json",
@@ -39,6 +41,33 @@ export const getMeetingForm = async (id, handleError) => {
         timezone: timezone,
       };
     })
+    .catch(function (error) {
+      handleError(error);
+    });
+};
+
+export const submitSchedules = async (id, body, handleError) => {
+  return await axiosWH
+    .post(`/meetings/${id}/schedule`, body)
+    .then((response) => response.data)
+    .catch(function (error) {
+      handleError(error);
+    });
+};
+
+export const editSchedules = async (id, body, handleError) => {
+  return await axiosWH
+    .put(`/meetings/${id}/schedule`, body)
+    .then((response) => response.data)
+    .catch(function (error) {
+      handleError(error);
+    });
+};
+
+export const getMySchedules = async (id, handleError) => {
+  return await axiosWH
+    .get(`/meetings/${id}/schedule`)
+    .then((response) => response.data)
     .catch(function (error) {
       handleError(error);
     });

@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-const TimeSlot = ({ meetingForm, members, degrees, isSelectable = false }) => {
+const TimeSlot = ({
+  meetingForm,
+  members,
+  degrees,
+  isSelectable = false,
+  setSelectedParent = () => {},
+}) => {
   const { meeting_dates, start_time, end_time, timezone } = meetingForm;
   const intervals = calculateIntervals(start_time, end_time);
   const offset = calculateOffset(start_time);
@@ -40,10 +46,18 @@ const TimeSlot = ({ meetingForm, members, degrees, isSelectable = false }) => {
   };
 
   useEffect(() => {
-    const { meeting_dates, start_time, end_time } = meetingForm;
-    const intervals = calculateIntervals(start_time, end_time);
-    setSelected(Array(meeting_dates.length).fill(Array(intervals).fill(false)));
-  }, [meetingForm]);
+    if (isSelectable) {
+      setSelected(
+        Array.from({ length: degrees.length }, (_, i) =>
+          Array.from({ length: degrees[i].length }, (_, j) => degrees[i][j] > 0)
+        )
+      );
+    }
+  }, [meetingForm, degrees]);
+
+  useEffect(() => {
+    setSelectedParent(selected);
+  }, [selected]);
 
   return (
     <div>
@@ -168,6 +182,7 @@ TimeSlot.propTypes = {
   degrees: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired))
     .isRequired,
   isSelectable: PropTypes.bool,
+  setSelectedParent: PropTypes.func,
 };
 
 const formatDate = (dateString) => {
@@ -183,7 +198,7 @@ const formatWeekday = (dateString) => {
     .toUpperCase();
 };
 
-const timeToMinutes = (timeString) => {
+export const timeToMinutes = (timeString) => {
   const [hours, minutes] = timeString.split(":").map(Number);
   return hours * 60 + minutes;
 };
@@ -194,7 +209,7 @@ export const calculateIntervals = (startTime, endTime) => {
   return Math.floor((endMinutes - startMinutes) / 15);
 };
 
-const calculateOffset = (startTime) => {
+export const calculateOffset = (startTime) => {
   const startMinutes = timeToMinutes(startTime);
   return (4 - (Math.floor(startMinutes / 15) % 4)) % 4;
 };
