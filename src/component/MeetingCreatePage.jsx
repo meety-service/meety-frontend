@@ -165,7 +165,7 @@ const MeetingCreatePage = () => {
       .post("/meetings", data)
       .then((response) => {
         console.log(response.data);
-        navigate(`/meeting/fill/${response.data.id}`);
+        navigate(`/meeting/fill_old/${response.data.id}`);
       })
       .catch((error) => {
         handleError(error);

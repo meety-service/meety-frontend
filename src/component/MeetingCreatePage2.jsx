@@ -79,7 +79,7 @@ const MeetingCreatePage2 = () => {
       .then((response) => {
         if (response.status >= 200 && response.status < 300) {
           console.log("미팅 생성 완료");
-          navigate(`/meeting/fill2/${1}`);
+          navigate(`/meeting/fill/${response.data.id}`);
         } else {
           console.log(response);
         }
