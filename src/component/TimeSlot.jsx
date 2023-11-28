@@ -60,108 +60,114 @@ const TimeSlot = ({
   }, [selected]);
 
   return (
-    <div>
-      <div className="flex justify-end items-center text-[12px] font-[700] text-right mb-[20px]">
-        <div>표준시 (Time Zone)</div>
-        <div className="w-[6px]" />
-        <div className="flex w-[142px] h-[26px] items-center border border-solid border-meety-component_outline_gray rounded-[5px] px-[6px]">
+    <div className="h-fit w-full pt-2">
+      <div className="h-fit w-full absolute right-0 flex justify-end space-x-2 items-center text-[12px] font-[700] text-right mb-[20px]">
+        <p>표준시 (Time Zone)</p>
+        <div className="flex w-[142px] h-[26px] items-center border-[1.5px] border-solid border-meety-component_outline_gray rounded-md px-[6px]">
           {timezone}
         </div>
       </div>
-      <div className="flex justify-center my-4">
-        <div className="relative flex flex-col w-12 items-center text-[8px] font-[700] mr-[6px]">
-          <div className="absolute top-[28px] right-0">
-            {calculateTimeAfterIntervals(start_time, 0)}
-          </div>
-          {offset !== 0 && (
-            <div
-              className="absolute right-0"
-              style={{ top: `${28 + 11 * offset}px` }}
-            >
-              {calculateTimeAfterIntervals(start_time, offset)}
+      <div className="mt-7 flex flex-col h-fit w-full">
+        <div className="flex justify-center my-4 w-full">
+          <div className="relative flex flex-col w-12 items-center text-[8px] font-[700] mr-[6px]">
+            <div className="absolute top-[28px] right-0">
+              {calculateTimeAfterIntervals(start_time, 0)}
             </div>
-          )}
-          {Array(Math.floor((intervals - offset) / 4))
-            .fill()
-            .map((_, i) => (
+            {offset !== 0 && (
               <div
-                key={i}
                 className="absolute right-0"
-                style={{ top: `${28 + 11 * (4 * (i + 1) + offset)}px` }}
+                style={{ top: `${28 + 11 * offset}px` }}
               >
-                {calculateTimeAfterIntervals(start_time, 4 * (i + 1) + offset)}
+                {calculateTimeAfterIntervals(start_time, offset)}
               </div>
-            ))}
-          {(intervals - offset) % 4 !== 0 && (
-            <div
-              className="absolute right-0"
-              style={{ top: `${28 + 11 * intervals}px` }}
-            >
-              {calculateTimeAfterIntervals(start_time, intervals)}
-            </div>
-          )}
-        </div>
-        {meeting_dates.map((meeting_date, i) => {
-          const { available_date } = meeting_date;
-          const weekday = new Date(available_date).getDay();
-
-          return (
-            <div key={i} className="flex flex-col items-center mx-[4px]">
-              <div className="text-[8px] font-[700]">
-                {formatDate(available_date)}
-              </div>
+            )}
+            {Array(Math.floor((intervals - offset) / 4))
+              .fill()
+              .map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute right-0"
+                  style={{ top: `${28 + 11 * (4 * (i + 1) + offset)}px` }}
+                >
+                  {calculateTimeAfterIntervals(
+                    start_time,
+                    4 * (i + 1) + offset
+                  )}
+                </div>
+              ))}
+            {(intervals - offset) % 4 !== 0 && (
               <div
-                className={
-                  "text-[14px] font-[700]" +
-                  (weekday === 6
-                    ? " text-meety-menu_sat_blue"
-                    : weekday === 0
-                    ? " text-red-700"
-                    : "")
-                }
+                className="absolute right-0"
+                style={{ top: `${28 + 11 * intervals}px` }}
               >
-                {formatWeekday(available_date)}
+                {calculateTimeAfterIntervals(start_time, intervals)}
               </div>
-              <div>
-                {Array.from({ length: intervals }, (_, j) => (
-                  <div
-                    key={j}
-                    className={
-                      "relative w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
-                      (j !== 0 && j % 4 === offset ? " border-t-black" : "")
-                    }
-                    onClick={() => {
-                      if (!isSelectable) return;
-                      handleClick(i, j);
-                    }}
-                  >
-                    <div
-                      className={
-                        "absolute top-0 left-0 w-[44px] h-[9px]" +
-                        (isSelectable
-                          ? i === startRow && j === startCol
-                            ? " bg-black"
-                            : " bg-[#00ff00]"
-                          : " bg-[#0000ff]")
-                      }
-                      style={{
-                        opacity: isSelectable
-                          ? i === startRow && j === startCol
-                            ? 0.5
-                            : selected[i] && selected[i][j]
-                            ? 1
-                            : 0
-                          : degrees[i] && degrees[i][j]
-                          ? degrees[i][j] / members
-                          : 0,
-                      }}
-                    />
+            )}
+          </div>
+          <div className="w-full flex flex-row overflow-auto">
+            {meeting_dates.map((meeting_date, i) => {
+              const { available_date } = meeting_date;
+              const weekday = new Date(available_date).getDay();
+
+              return (
+                <div key={i} className="flex flex-col items-center mx-[4px]">
+                  <div className="text-[8px] font-[700]">
+                    {formatDate(available_date)}
                   </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+                  <div
+                    className={
+                      "text-[14px] font-[700]" +
+                      (weekday === 6
+                        ? " text-meety-menu_sat_blue"
+                        : weekday === 0
+                        ? " text-red-700"
+                        : "")
+                    }
+                  >
+                    {formatWeekday(available_date)}
+                  </div>
+                  <div className="shadow-sm shadow-stone-300">
+                    {Array.from({ length: intervals }, (_, j) => (
+                      <div
+                        key={j}
+                        className={
+                          "relative w-[46px] h-[11px] border border-solid border-meety-component_outline_gray" +
+                          (j !== 0 && j % 4 === offset ? " border-t-black" : "")
+                        }
+                        onClick={() => {
+                          if (!isSelectable) return;
+                          handleClick(i, j);
+                        }}
+                      >
+                        <div
+                          className={
+                            "absolute top-0 left-0 w-[44px] h-[9px]" +
+                            (isSelectable
+                              ? i === startRow && j === startCol
+                                ? " bg-black"
+                                : " bg-[#00ff00]"
+                              : " bg-[#0000ff]")
+                          }
+                          style={{
+                            opacity: isSelectable
+                              ? i === startRow && j === startCol
+                                ? 0.5
+                                : selected[i] && selected[i][j]
+                                ? 1
+                                : 0
+                              : degrees[i] && degrees[i][j]
+                              ? degrees[i][j] / members
+                              : 0,
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

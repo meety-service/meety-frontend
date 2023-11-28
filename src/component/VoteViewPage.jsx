@@ -29,6 +29,14 @@ const VoteViewPage = () => {
   const [participants, setParticipants] = useState(0);
   const [voteOptions, setVoteOptions] = useState([]);
 
+  const voteChoices = voteOptions.filter(
+    (element) => element.largest_choice == true
+  ).map((element, index) => (
+    <div key={index}>
+      <p>{formatOption(element)}</p>
+    </div>
+  ));
+
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingInfo(id, handleError).then((data) => {
@@ -52,6 +60,7 @@ const VoteViewPage = () => {
             ).user_choice = true)
         );
         setVoteOptions(options);
+        console.log(options);
       });
     };
     fetchData();
@@ -113,7 +122,9 @@ const VoteViewPage = () => {
           <StepTitle title="3. 투표를 마감할까요?" />
           <SubMessage title="투표를 마감하면 현재까지 가장 많은 투표를 받은 날짜로 미팅 일자가" />
           <SubMessage title="결정됩니다." />
-          <div>미팅 일자: 10월 6일 (금) 16:30 ~ 18:00</div>
+          
+          <div>미팅 일자 : {voteChoices}</div>
+          
           <GradationButton
             text="투표 마감하기"
             onButtonClick={async () => {

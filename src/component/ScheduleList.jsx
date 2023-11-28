@@ -15,14 +15,14 @@ const ScheduleList = ({ schedules }) => {
   };
 
   return (
-    <div className="shadow-lg">
+    <div>
       {schedules.map((schedule, index) => (
         <div
           key={index}
-          className="border-x border-solid border-meety-component_outline_gray"
+          className="border-solid border-meety-component_outline_gray border-x-[1.5px] border-b-[1.5px]"
         >
           <button
-            className="flex w-full h-[40px] items-center border-b border-solid border-meety-component_outline_gray text-[15px] font-[700] pl-[6px]"
+            className="flex w-full h-[40px] items-center border-b border-solid border-meety-component_outline_gray text-[15px] font-[700] pl-3"
             onClick={() => handleListOpen(index)}
           >
             {schedule.date}

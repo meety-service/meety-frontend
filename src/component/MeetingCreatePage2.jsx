@@ -118,7 +118,7 @@ const MeetingCreatePage2 = () => {
   }, []);
 
   return (
-    <div className="nav_top_padding mobile-h-fit bg-white w-screen h-fit">
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
           <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
@@ -138,11 +138,10 @@ const MeetingCreatePage2 = () => {
                 className="pl-3 h-12 w-full rounded-full"
               />
             </div>
-          </div>
-          <div className="h-20 flex flex-col justify-center items-center">
-            <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
-          </div>
-          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2">
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+
             <StepTitle
               title="1. 미팅은 어느 요일에 진행되어야 하나요?"
               className="left-0 top-0"
@@ -153,66 +152,68 @@ const MeetingCreatePage2 = () => {
               inline
               highlightDates={selectedDates}
             ></DatePicker>
-          </div>
-          <div className="h-20 flex flex-col justify-center items-center">
-            <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
-          </div>
-          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2">
-            <StepTitle title="3.미팅은 어느 시간에 진행되어야 하나요?" />
-            <div className="w-full flex flex-row h-[80px] space-x-2 justify-center">
-              <div className="flex flex-col justify-end space-y-2 h-full w-[50%]">
-                <StepTitle title="표준시(Time Zone)" />
-                <Dropdown
-                  options={timezone.map((item) => {
-                    return item.name;
-                  })}
-                  onChange={(event) => {
-                    setSelectedTimeZone(
-                      timezone.find((item) => item.name == event.value).id
-                    );
-                  }}
-                  value={"지역 선택"}
-                  placeholder="Select an option"
-                />
-              </div>
-              <div className="flex flex-col justify-end h-full w-[50%]">
-                <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2">
+              <StepTitle title="3.미팅은 어느 시간에 진행되어야 하나요?" />
+              <div className="w-full flex flex-row h-[80px] space-x-2 justify-center">
+                <div className="flex flex-col justify-end space-y-2 h-full w-[50%]">
+                  <StepTitle title="표준시(Time Zone)" />
                   <Dropdown
-                    options={timeOptions}
+                    options={timezone.map((item) => {
+                      return item.name;
+                    })}
                     onChange={(event) => {
-                      setStartTime(event.value + ":00");
+                      setSelectedTimeZone(
+                        timezone.find((item) => item.name == event.value).id
+                      );
                     }}
-                    value={"00:00"}
+                    value={"지역 선택"}
                     placeholder="Select an option"
                   />
-                  <StepTitle title="에서" />
                 </div>
-                <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
-                  <Dropdown
-                    options={timeOptions}
-                    onChange={(event) => {
-                      setEndTime(event.value + ":00");
-                    }}
-                    value={"00:00"}
-                    placeholder="Select an option"
-                  />
-                  <StepTitle title="사이" />
+                <div className="flex flex-col justify-end h-full w-[50%]">
+                  <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
+                    <Dropdown
+                      options={timeOptions}
+                      onChange={(event) => {
+                        setStartTime(event.value + ":00");
+                      }}
+                      value={"00:00"}
+                      placeholder="Select an option"
+                    />
+                    <StepTitle title="에서" />
+                  </div>
+                  <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
+                    <Dropdown
+                      options={timeOptions}
+                      onChange={(event) => {
+                        setEndTime(event.value + ":00");
+                      }}
+                      value={"00:00"}
+                      placeholder="Select an option"
+                    />
+                    <StepTitle title="사이" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="h-24 flex flex-col justify-center items-center">
-            <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
-          </div>
-          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 pb-6">
+            <div className="h-24 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2 pb-6">
             <StepTitle title="4. 미팅을 생성할 준비가 되셨나요?" />
-            <SubMessage title="'미팅 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
-            <SubMessage title="미팅 폼을 다른 사람들에게 공유할 수 있습니다." />
+              <SubMessage title="'미팅 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
+              <SubMessage title="미팅 폼을 다른 사람들에게 공유할 수 있습니다." />
+            </div>
+
+              
+            <GradationButton
+              text="미팅 폼 생성하기"
+              onButtonClick={onCreateButtonClick}
+            />
           </div>
-          <GradationButton
-            text="미팅 폼 생성하기"
-            onButtonClick={onCreateButtonClick}
-          />
         </div>
       </div>
     </div>

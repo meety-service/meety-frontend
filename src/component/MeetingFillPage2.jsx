@@ -43,6 +43,48 @@ const MeetingFillPage2 = () => {
 
   const [timeSlotSelected, setTimeSlotSelected] = useState([]);
 
+  const onSubmitButtonClick = async () => {
+      const select_times = [];
+      for (let i = 0; i < timeSlotSelected.length; i++) {
+        const date = meetingForm.meeting_dates[i].available_date;
+
+        const times = [];
+        for (let j = 0; j < timeSlotSelected[i].length; j++) {
+          if (timeSlotSelected[i][j] === true) {
+            times.push({
+              time: calculateTimeIn24hAfterIntervals(
+                meetingForm.start_time,
+                j
+              ),
+            });
+          }
+        }
+
+        if (times.length > 0) {
+          select_times.push({ date, times });
+        }
+      }
+
+      if (meetingInfo.user_state === 0) {
+        await submitSchedules(
+          id,
+          { nickname, select_times },
+          handleError
+        );
+      } else if (meetingInfo.user_state === 1) {
+        await editSchedules(
+          id,
+          { nickname, select_times },
+          handleError
+        );
+      } else {
+        throw new Error("unexpected user_state");
+      }
+
+      navigate(`/meeting/view/${id}`, { replace: true });
+  }
+  
+
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingInfo(id, handleError).then((data) => {
@@ -51,9 +93,11 @@ const MeetingFillPage2 = () => {
       await getMeetingForm(id, handleError).then((data) => {
         setMeetingForm(data);
       });
-      await getMySchedules(id, handleError).then((data) => {
-        setNickName(data.nickname);
-        setSelectedTimes(data.select_times);
+      await getMySchedules(id, handleError, true).then((data) => {
+        if (data) {
+          setNickName(data.nickname);
+          setSelectedTimes(data.select_times);
+        }
       });
     };
     fetchData();
@@ -86,99 +130,64 @@ const MeetingFillPage2 = () => {
   }, [meetingForm, selectedTimes]);
 
   return (
-    <div className="nav_top_padding mobile_h_fit bg-white w-screen h-screen">
-      <div className="relative">
-        <div className="absolute top-[12px] right-[12px] flex justify-end">
-          <button
-            className="text-[14px] text-right underline"
-            onClick={async () =>
-              await navigator.clipboard.writeText(window.location.href)
-            }
-          >
-            <div>링크 복사하기</div>
-          </button>
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
+      <div className="relative flex flex-col justify-center items-center w-full h-full">
+        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
+            <button
+              className="absolute top-0 right-0 mt-0 text-[14px] text-right underline"
+              onClick={async () =>
+                await navigator.clipboard.writeText(window.location.href)
+              }
+            >
+              <p>링크 복사하기</p>
+            </button>
+            <div className="w-full pb-4">
+              <PageTitle title="미팅 폼 작성하기" />
+            </div>
+            <StepTitle
+              title="1. 다른 사람에게 보여질 이름을 적어주세요."
+              className="left-0 top-0"
+            />
+            <div className="bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue p-1 rounded-full">
+              <input
+                type="text"
+                placeholder="ex) 홍길동"
+                value={nickname}
+                onChange={(event) => setNickName(event.target.value)}
+                className="pl-3 h-12 w-full rounded-full"
+              />
+            </div>
+
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+
+            <StepTitle title="2. 미팅이 가능한 시간을 모두 선택해주세요." />
+            <TimeSlot
+              meetingForm={meetingForm}
+              members={1}
+              degrees={degrees}
+              isSelectable={true}
+              setSelectedParent={setTimeSlotSelected}
+            />
+
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2 pb-6">
+            <StepTitle title="3. 미팅폼 작성이 모두 끝나셨나요?" />
+            <SubMessage title="아래의 '제출하기' 버튼을 클릭하여 다른 사람들에게 내 미팅 가능 시간을 공유하고" />
+            <SubMessage title="다른 사람들의 미팅 가능 시간을 확인할 수 있습니다." />
+            </div>
+
+            <GradationButton
+              text="제출하기"
+              onButtonClick={onSubmitButtonClick}
+            />
+          </div>
         </div>
-      </div>
-      <div className="ml-[16px] mt-[32px]">
-        <PageTitle title="미팅 폼 작성하기" />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="1. 다른 사람에게 보여질 이름을 적어주세요." />
-      </div>
-      <div className="bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue p-1 rounded-full mx-[24px] my-[12px]">
-        <input
-          type="text"
-          placeholder="ex) 홍길동"
-          value={nickname}
-          onChange={(event) => setNickName(event.target.value)}
-          className="pl-3 h-12 w-full rounded-full"
-        />
-      </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="2. 미팅이 가능한 시간을 모두 선택해주세요." />
-      </div>
-      <div className="mx-[36px] my-[12px]">
-        <TimeSlot
-          meetingForm={meetingForm}
-          members={1}
-          degrees={degrees}
-          isSelectable={true}
-          setSelectedParent={setTimeSlotSelected}
-        />
-      </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="3. 미팅 폼 작성이 모두 끝나셨나요?" />
-      </div>
-      <div className="mx-[48px] mt-[8px]">
-        <SubMessage title="아래의 제출 버튼을 클릭하여 다른 사람들에게 내 미팅 가능 시간을 공유하고, " />
-        <SubMessage title="다른 사람들의 미팅 가능 시간을 확인할 수 있습니다." />
-      </div>
-      <div className="pt-[20px] pb-[28px] px-[20px]">
-        <GradationButton
-          text="제출하기"
-          onButtonClick={async () => {
-            const select_times = [];
-            for (let i = 0; i < timeSlotSelected.length; i++) {
-              const date = meetingForm.meeting_dates[i].available_date;
-
-              const times = [];
-              for (let j = 0; j < timeSlotSelected[i].length; j++) {
-                if (timeSlotSelected[i][j] === true) {
-                  times.push({
-                    time: calculateTimeIn24hAfterIntervals(
-                      meetingForm.start_time,
-                      j
-                    ),
-                  });
-                }
-              }
-
-              if (times.length > 0) {
-                select_times.push({ date, times });
-              }
-            }
-
-            if (meetingInfo.user_state === 0) {
-              await submitSchedules(
-                id,
-                { nickname, select_times },
-                handleError
-              );
-            } else if (meetingInfo.user_state === 1) {
-              await editSchedules(id, { nickname, select_times }, handleError);
-            } else {
-              throw new Error("unexpected user_state");
-            }
-
-            navigate(`/meeting/view/${id}`, { replace: true });
-          }}
-        />
       </div>
     </div>
   );
