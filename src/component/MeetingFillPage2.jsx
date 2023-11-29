@@ -18,6 +18,8 @@ import {
   getMySchedules,
 } from "../utils/axios";
 import { timeToMinutes, calculateIntervals } from "./TimeSlot";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const MeetingFillPage2 = () => {
   const { id } = useParams();
@@ -28,6 +30,14 @@ const MeetingFillPage2 = () => {
 
   const [error, handleError] = useState(undefined);
   useErrorCheck(error);
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const [meetingInfo, setMeetingInfo] = useState({});
 
@@ -136,9 +146,11 @@ const MeetingFillPage2 = () => {
           <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
             <button
               className="absolute top-0 right-0 mt-0 text-[14px] text-right underline"
-              onClick={async () =>
-                await navigator.clipboard.writeText(window.location.href)
-              }
+              onClick={async () => {
+                await navigator.clipboard.writeText(window.location.href);
+                setSnackbarText("링크가 클립보드에 복사되었습니다.");
+                openSnackbar();
+              }}
             >
               <p>링크 복사하기</p>
             </button>
