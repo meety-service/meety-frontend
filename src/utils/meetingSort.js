@@ -119,6 +119,12 @@ export const getSortedMeetingInfo = (input, startTime, endTime, minCellCount) =>
         }
     }
 
-    result.schedules.sort((a, b) => a.date.localeCompare(b.date));
+    result.schedules.sort((a, b) => {
+        const parseDate = (dateString) => {
+            const [year, month, day] = dateString.match(/(\d+)/g);
+            return new Date(year, month - 1, day);
+        }
+        return parseDate(a.date) - parseDate(b.date);
+    });
     return result;
 };
