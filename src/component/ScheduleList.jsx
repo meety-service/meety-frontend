@@ -14,6 +14,16 @@ const ScheduleList = ({ schedules }) => {
     setListOpen(newListOpen);
   };
 
+  if (schedules.length === 0) {
+    return (
+      <div className="border-solid border-meety-component_outline_gray border-x-[1.5px] border-b-[1.5px]">
+        <div className="flex w-full h-[40px] justify-center items-center border-b border-solid border-meety-component_outline_gray text-[15px] font-[700] pl-3">
+          겹치는 시간대가 없습니다!
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {schedules.map((schedule, index) => (

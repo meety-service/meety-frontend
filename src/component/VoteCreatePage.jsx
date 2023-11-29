@@ -123,22 +123,20 @@ const VoteCreatePage = () => {
   };
 
   const onVoteCreateButtonClick = async () => {
-    console.log(voteOptions.length)
+    console.log(voteOptions.length);
     if (voteOptions.length == 0) {
       setSnackbarText("작성된 투표 선택지가 없습니다.");
       openSnackbar();
     } else {
-      async () => {
+      
         await createVoteForm(
           id,
           { vote_choices: groupByDate(voteOptions) },
           handleError
         );
         navigate(`/vote/fill/${id}`, { replace: true });
-      }
     }
-  }
-  
+  };
 
   const removeVoteOption = (index) => {
     setVoteOptions((options) => [
@@ -309,16 +307,19 @@ const VoteCreatePage = () => {
                     id="dropdown"
                     value={optionDate}
                     onChange={(event) => setOptionDate(event.target.value)}
-                    className="text-sm font-bold"
+                    className="text-[14px] font-[700]"
                   >
-                    {meetingForm.meeting_dates.map((meeting_date) => (
-                      <option
-                        key={meeting_date.available_date}
-                        value={meeting_date.available_date}
-                      >
-                        {meeting_date.available_date}
-                      </option>
-                    ))}
+                    {sortedSchedulesForOption.map((schedule) => {
+                      const [year, month, day] = schedule.date.match(/(\d+)/g);
+                      const monthString = month.padStart(2, "0");
+                      const dayString = day.padStart(2, "0");
+                      const date = `${year}-${monthString}-${dayString}`;
+                      return (
+                        <option key={date} value={date}>
+                          {date}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 <div className="flex justify-between p-[8px]">
@@ -404,8 +405,8 @@ const VoteCreatePage = () => {
             </div>
 
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
-            <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
-            <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 투표 폼을 다른 사람들에게 공유할 수 있습니다." />
+              <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
+              <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 투표 폼을 다른 사람들에게 공유할 수 있습니다." />
             </div>
 
             <GradationButton
@@ -461,20 +462,6 @@ const groupByDate = (flattenedArray) => {
   }, []);
 };
 
-const flattenWithDate = (groupedArray) => {
-  return groupedArray.reduce((result, element) => {
-    element.times.forEach((time) => {
-      result.push({
-        date: element.date,
-        start_time: time.start_time,
-        end_time: time.end_time,
-      });
-    });
-
-    return result;
-  }, []);
-};
-
 const getOptionStartTimeList = (sortedSchedules, optionDate) => {
   const result = [];
 
@@ -513,7 +500,7 @@ const getOptionEndTimeList = (sortedSchedules, optionDate, optionStartTime) => {
     return [];
   }
 
-  const [_, end] = time.split(" ~ ");
+  const end = time.split(" ~ ")[1];
   const [sh, sm] = optionStartTime.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
   const s = Math.floor((sh * 60 + sm) / 15) + 1;
