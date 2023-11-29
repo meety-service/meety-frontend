@@ -22,6 +22,8 @@ import { formatOption } from "./VoteCreatePage";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
 import { calculateIntervals } from "./TimeSlot";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const VoteFillPage = () => {
   const { id } = useParams();
@@ -32,6 +34,14 @@ const VoteFillPage = () => {
 
   const [error, handleError] = useState(undefined);
   useErrorCheck(error);
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const [meetingInfo, setMeetingInfo] = useState({});
 
@@ -125,9 +135,11 @@ const VoteFillPage = () => {
         <div className="absolute top-[12px] right-[12px] flex justify-end">
           <button
             className="text-[14px] text-right underline"
-            onClick={async () =>
-              await navigator.clipboard.writeText(window.location.href)
-            }
+            onClick={async () => {
+              await navigator.clipboard.writeText(window.location.href);
+              setSnackbarText("링크가 클립보드에 복사되었습니다.");
+              openSnackbar();
+            }}
           >
             <div>링크 복사하기</div>
           </button>
@@ -168,7 +180,7 @@ const VoteFillPage = () => {
                 </div>
               </div>
               <div className="text-[12px]">
-                {option.count}/{participants} (명)
+                {option.count}/{members} (명)
               </div>
             </div>
           </button>
