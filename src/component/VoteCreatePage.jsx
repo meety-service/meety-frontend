@@ -46,6 +46,7 @@ const VoteCreatePage = () => {
   const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
   const [selectedMinCellCount, setSelectedMinCellCount] = useState(1);
   const [sortedSchedules, setSortedSchedules] = useState([]);
+  const [sortedSchedulesForOption, setSortedSchedulesForOption] = useState([]);
 
   const handleMinHourDropdown = (event) => {
     setSelectedMinCellCount(event.target.value);
@@ -143,25 +144,33 @@ const VoteCreatePage = () => {
         selectedMinCellCount
       ).schedules
     );
+    setSortedSchedulesForOption(
+      getSortedMeetingInfo(
+        { members, schedules },
+        meetingForm.start_time,
+        meetingForm.end_time,
+        1
+      ).schedules
+    );
     setOptionDate(meetingForm.meeting_dates[0]?.available_date ?? "");
   }, [members, schedules, meetingForm, selectedMinCellCount]);
 
   useEffect(() => {
     const optionStartTimeList = getOptionStartTimeList(
-      sortedSchedules,
+      sortedSchedulesForOption,
       optionDate
     );
     setOptionStartTime(optionStartTimeList?.[0] ?? "");
-  }, [sortedSchedules, optionDate]);
+  }, [sortedSchedulesForOption, optionDate]);
 
   useEffect(() => {
     const optionEndTimeList = getOptionEndTimeList(
-      sortedSchedules,
+      sortedSchedulesForOption,
       optionDate,
       optionStartTime
     );
     setOptionEndTime(optionEndTimeList?.[0] ?? "");
-  }, [sortedSchedules, optionDate, optionStartTime]);
+  }, [sortedSchedulesForOption, optionDate, optionStartTime]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -291,13 +300,14 @@ const VoteCreatePage = () => {
               onChange={(event) => setOptionStartTime(event.target.value)}
               className="text-[14px] font-[700]"
             >
-              {getOptionStartTimeList(sortedSchedules, optionDate)?.map(
-                (time, index) => (
-                  <option key={index} value={time}>
-                    {formatTime(time)}
-                  </option>
-                )
-              )}
+              {getOptionStartTimeList(
+                sortedSchedulesForOption,
+                optionDate
+              )?.map((time, index) => (
+                <option key={index} value={time}>
+                  {formatTime(time)}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex justify-between p-[8px]">
@@ -311,7 +321,7 @@ const VoteCreatePage = () => {
               className="text-[14px] font-[700]"
             >
               {getOptionEndTimeList(
-                sortedSchedules,
+                sortedSchedulesForOption,
                 optionDate,
                 optionStartTime
               )?.map((time, index) => (
