@@ -118,5 +118,7 @@ export const getSortedMeetingInfo = (input, startTime, endTime, minCellCount) =>
             initVars();
         }
     }
+
+    result.schedules.sort((a, b) => a.date.localeCompare(b.date));
     return result;
 };
