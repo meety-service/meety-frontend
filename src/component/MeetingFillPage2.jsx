@@ -190,8 +190,7 @@ const MeetingFillPage2 = () => {
 
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2 pb-6">
             <StepTitle title="3. 미팅폼 작성이 모두 끝나셨나요?" />
-            <SubMessage title="아래의 '제출하기' 버튼을 클릭하여 다른 사람들에게 내 미팅 가능 시간을 공유하고" />
-            <SubMessage title="다른 사람들의 미팅 가능 시간을 확인할 수 있습니다." />
+            <SubMessage title="아래의 '제출하기' 버튼을 클릭하여 다른 사람들에게 내 미팅 가능 시간을 공유하고 다른 사람들의 미팅 가능 시간을 확인할 수 있습니다." />
             </div>
 
             <GradationButton

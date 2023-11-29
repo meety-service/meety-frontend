@@ -198,9 +198,9 @@ const MeetingViewPage = () => {
 
                 <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
                   <StepTitle title="3.투표를 진행할까요?" />
-                  <SubMessage title="아래의 '투표 진행하기 버튼을 클릭하여 미팅 폼 작성을 마감하고," />
-                  <SubMessage title="최종 미팅 일자 결정을 위한 투표 폼을 생성할 수 있습니다." />
+                  <SubMessage title="아래의 '투표 진행하기 버튼을 클릭하여 미팅 폼 작성을 마감하고, 최종 미팅 일자 결정을 위한 투표 폼을 생성할 수 있습니다." />
                 </div>
+                
                 <GradationButton
                   text="투표 진행하기"
                   onButtonClick={() => navigate(`/vote/create/${id}`)}

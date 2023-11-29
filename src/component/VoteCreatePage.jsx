@@ -23,6 +23,8 @@ import { useErrorCheck } from "../hooks/useErrorCheck";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
 import { calculateIntervals } from "./TimeSlot";
 import { dateParser } from "../utils/dateParser";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -65,6 +67,14 @@ const VoteCreatePage = () => {
   const [optionEndTime, setOptionEndTime] = useState("");
 
   const [voteOptions, setVoteOptions] = useState([]);
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const addDefaultVoteOption = () => {
     const newOption = {
@@ -111,6 +121,24 @@ const VoteCreatePage = () => {
 
     setVoteOptions((options) => [...options, newOption]);
   };
+
+  const onVoteCreateButtonClick = async () => {
+    console.log(voteOptions.length)
+    if (voteOptions.length == 0) {
+      setSnackbarText("작성된 투표 선택지가 없습니다.");
+      openSnackbar();
+    } else {
+      async () => {
+        await createVoteForm(
+          id,
+          { vote_choices: groupByDate(voteOptions) },
+          handleError
+        );
+        navigate(`/vote/fill/${id}`, { replace: true });
+      }
+    }
+  }
+  
 
   const removeVoteOption = (index) => {
     setVoteOptions((options) => [
@@ -205,7 +233,7 @@ const VoteCreatePage = () => {
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
-          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit px-2 rounded-xl">
+          <div className="relative flex flex-col justify-center w-full md:w-2/5 h-fit px-2 rounded-xl">
             <div className="w-full pb-4">
               <PageTitle title="투표 폼 생성하기" />
             </div>
@@ -272,7 +300,7 @@ const VoteCreatePage = () => {
 
             <div className="mt-3 shadow-md shadow-stone-400 rounded-[10px]">
               <ListHeader title="투표 선택지를 추가해보세요." />
-              <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
+              <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px]">
                 <div className="flex justify-between p-[8px]">
                   <div className="text-sm font-bold">
                     (1) 날짜를 입력하세요.
@@ -342,60 +370,48 @@ const VoteCreatePage = () => {
                     추가하기
                   </button>
                 </div>
-                <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
-                  <button
-                    className="w-full h-full font-[700] text-white"
-                    onClick={addDefaultVoteOption}
-                  >
-                    기본값 추가하기 (테스트)
-                  </button>
-                </div>
               </div>
             </div>
 
-            <div className="mt-3">
-            <div className="mx-[36px] mt-[34px]">
-              <ListHeader title="다음과 같이 투표를 진행합니다." />
-              {voteOptions.map((option, index) => (
-                <OptionListItem
-                  key={index}
-                  index={index}
-                  option={option}
-                  endComponent={
-                    <button
-                      className="text-meety-del_red"
-                      onClick={() => removeVoteOption(index)}
-                    >
-                      <RemoveCircleOutlineRoundedIcon />
-                    </button>
-                  }
-                />
-              ))}
+            {voteOptions.length != 0 && (
+              <div>
+                <div className="mt-10 shadow-md shadow-stone-400 rounded-t-[10px]">
+                  <ListHeader title="다음과 같이 투표를 진행합니다." />
+                </div>
+
+                <div>
+                  {voteOptions.map((option, index) => (
+                    <OptionListItem
+                      key={index}
+                      index={index}
+                      option={option}
+                      endComponent={
+                        <button
+                          className="text-meety-del_red mb-[1px]"
+                          onClick={() => removeVoteOption(index)}
+                        >
+                          <RemoveCircleOutlineRoundedIcon />
+                        </button>
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
             </div>
+
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
+            <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
+            <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 투표 폼을 다른 사람들에게 공유할 수 있습니다." />
             </div>
-            <div className="flex w-full justify-center py-[40px]">
-              <KeyboardDoubleArrowDownRoundedIcon />
-            </div>
-            <div className="ml-[20px] mt-[20px]">
-              <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
-            </div>
-            <div className="mx-[48px] mt-[8px]">
-              <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
-              <SubMessage title="투표 폼을 다른 사람들에게 공유할 수 있습니다." />
-            </div>
-            <div className="pt-[20px] pb-[28px] px-[20px]">
-              <GradationButton
-                text="투표 폼 생성하기"
-                onButtonClick={async () => {
-                  await createVoteForm(
-                    id,
-                    { vote_choices: groupByDate(voteOptions) },
-                    handleError
-                  );
-                  navigate(`/vote/fill/${id}`, { replace: true });
-                }}
-              />
-            </div>
+
+            <GradationButton
+              text="투표 폼 생성하기"
+              onButtonClick={onVoteCreateButtonClick}
+            />
           </div>
         </div>
       </div>
