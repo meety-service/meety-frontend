@@ -65,7 +65,7 @@ const MeetingFillPage2 = () => {
         }
       }
 
-      if (meetingInfo.user_state === 0) {
+      if (meetingInfo === undefined || meetingInfo.user_state === 0) {
         await submitSchedules(
           id,
           { nickname, select_times },
