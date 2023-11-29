@@ -66,27 +66,6 @@ const VoteCreatePage = () => {
 
   const [voteOptions, setVoteOptions] = useState([]);
 
-  const addDefaultVoteOption = () => {
-    const newOption = {
-      date: "2023-10-08",
-      start_time: "16:00:00",
-      end_time: "18:00:00",
-    };
-
-    if (
-      voteOptions.some(
-        (option) =>
-          option.date === newOption.date &&
-          option.start_time === newOption.start_time &&
-          option.end_time === newOption.end_time
-      )
-    ) {
-      return;
-    }
-
-    setVoteOptions((options) => [...options, newOption]);
-  };
-
   const addVoteOption = () => {
     if (optionDate === "" || optionStartTime === "" || optionEndTime === "") {
       return;
@@ -342,14 +321,6 @@ const VoteCreatePage = () => {
               추가하기
             </button>
           </div>
-          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg m-[10px]">
-            <button
-              className="w-full h-full font-[700] text-white"
-              onClick={addDefaultVoteOption}
-            >
-              기본값 추가하기 (테스트)
-            </button>
-          </div>
         </div>
       </div>
       <div className="mx-[36px] mt-[34px]">
@@ -439,20 +410,6 @@ const groupByDate = (flattenedArray) => {
   }, []);
 };
 
-const flattenWithDate = (groupedArray) => {
-  return groupedArray.reduce((result, element) => {
-    element.times.forEach((time) => {
-      result.push({
-        date: element.date,
-        start_time: time.start_time,
-        end_time: time.end_time,
-      });
-    });
-
-    return result;
-  }, []);
-};
-
 const getOptionStartTimeList = (sortedSchedules, optionDate) => {
   const result = [];
 
@@ -491,7 +448,7 @@ const getOptionEndTimeList = (sortedSchedules, optionDate, optionStartTime) => {
     return [];
   }
 
-  const [_, end] = time.split(" ~ ");
+  const end = time.split(" ~ ")[1];
   const [sh, sm] = optionStartTime.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
   const s = Math.floor((sh * 60 + sm) / 15) + 1;
