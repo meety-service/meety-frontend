@@ -20,6 +20,8 @@ import {
 } from "../utils/axios";
 import { calculateIntervals } from "./TimeSlot";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const MeetingViewPage = () => {
   const { id } = useParams();
@@ -30,6 +32,14 @@ const MeetingViewPage = () => {
 
   const [error, handleError] = useState(undefined);
   useErrorCheck(error);
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const [meetingForm, setMeetingForm] = useState({
     meeting_dates: [],
@@ -203,7 +213,14 @@ const MeetingViewPage = () => {
                 </div>
                 <GradationButton
                   text="투표 진행하기"
-                  onButtonClick={() => navigate(`/vote/create/${id}`)}
+                  onButtonClick={() => {
+                    if (schedules.length === 0) {
+                      setSnackbarText("작성된 미팅 폼이 없습니다.");
+                      openSnackbar();
+                    } else {
+                      navigate(`/vote/create/${id}`);
+                    }
+                  }}
                 />
                 <div className="h-[40px]" />
               </div>
