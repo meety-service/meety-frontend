@@ -119,6 +119,8 @@ export const getSortedMeetingInfo = (input, startTime, endTime, minCellCount) =>
         }
     }
 
+    result.schedules = result.schedules.filter((schedule) => schedule.cases.length > 0);
+
     result.schedules.sort((a, b) => {
         const parseDate = (dateString) => {
             const [year, month, day] = dateString.match(/(\d+)/g);

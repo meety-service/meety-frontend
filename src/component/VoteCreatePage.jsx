@@ -280,14 +280,17 @@ const VoteCreatePage = () => {
               onChange={(event) => setOptionDate(event.target.value)}
               className="text-[14px] font-[700]"
             >
-              {meetingForm.meeting_dates.map((meeting_date) => (
-                <option
-                  key={meeting_date.available_date}
-                  value={meeting_date.available_date}
-                >
-                  {meeting_date.available_date}
-                </option>
-              ))}
+              {sortedSchedulesForOption.map((schedule) => {
+                const [year, month, day] = schedule.date.match(/(\d+)/g);
+                const monthString = month.padStart(2, "0");
+                const dayString = day.padStart(2, "0");
+                const date = `${year}-${monthString}-${dayString}`;
+                return (
+                  <option key={date} value={date}>
+                    {date}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div className="flex justify-between p-[8px]">
