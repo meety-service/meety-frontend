@@ -188,7 +188,7 @@ const MeetingViewPage = () => {
               text="수정하기"
               onButtonClick={() => navigate(`/meeting/fill/${id}`)}
             />
-            {meetingInfo.isMaster && (
+            {meetingInfo.isMaster == 1 && (
               <div>
                 <div className="h-20 flex flex-col justify-center items-center">
                   <KeyboardDoubleArrowDownRoundedIcon
