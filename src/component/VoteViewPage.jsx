@@ -101,7 +101,7 @@ const VoteViewPage = () => {
                 ""
               )}
               <div className="text-[12px]">
-                {option.count}/{participants} (명)
+                {option.count}/{members} (명)
               </div>
             </div>
           </div>
