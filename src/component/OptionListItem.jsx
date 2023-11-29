@@ -5,12 +5,11 @@ import { formatOption } from "./VoteCreatePage";
 
 const OptionListItem = ({ index, option, endComponent }) => {
   return (
-    <div className="border border-solid border-meety-component_outline_gray rounded-[10px] shadow-lg p-[6px] my-[14px]">
-      <div className="flex justify-between">
-        <div className="flex items-center">
+    <div className="border-[1.5px] border-solid border-meety-component_outline_gray rounded-[10px] shadow-lg p-[8px] my-[14px]">
+      <div className="w-full h-full flex justify-between items-center">
+        <div className="flex items-center justify-center">
           <IndexedItemHeader index={index} />
-          <div className="w-[6px]"></div>
-          <div className="text-[12px] font-[700]">{formatOption(option)}</div>
+          <div className="pl-[6px] text-sm font-[700] pb-[1px]">{formatOption(option)}</div>
         </div>
         {endComponent}
       </div>

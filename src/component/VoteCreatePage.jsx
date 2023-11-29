@@ -23,6 +23,8 @@ import { useErrorCheck } from "../hooks/useErrorCheck";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
 import { calculateIntervals } from "./TimeSlot";
 import { dateParser } from "../utils/dateParser";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -66,6 +68,35 @@ const VoteCreatePage = () => {
 
   const [voteOptions, setVoteOptions] = useState([]);
 
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
+
+  const addDefaultVoteOption = () => {
+    const newOption = {
+      date: "2023-10-08",
+      start_time: "16:00:00",
+      end_time: "18:00:00",
+    };
+
+    if (
+      voteOptions.some(
+        (option) =>
+          option.date === newOption.date &&
+          option.start_time === newOption.start_time &&
+          option.end_time === newOption.end_time
+      )
+    ) {
+      return;
+    }
+
+    setVoteOptions((options) => [...options, newOption]);
+  };
+
   const addVoteOption = () => {
     if (optionDate === "" || optionStartTime === "" || optionEndTime === "") {
       return;
@@ -89,6 +120,22 @@ const VoteCreatePage = () => {
     }
 
     setVoteOptions((options) => [...options, newOption]);
+  };
+
+  const onVoteCreateButtonClick = async () => {
+    console.log(voteOptions.length);
+    if (voteOptions.length == 0) {
+      setSnackbarText("작성된 투표 선택지가 없습니다.");
+      openSnackbar();
+    } else {
+      
+        await createVoteForm(
+          id,
+          { vote_choices: groupByDate(voteOptions) },
+          handleError
+        );
+        navigate(`/vote/fill/${id}`, { replace: true });
+    }
   };
 
   const removeVoteOption = (index) => {
@@ -181,188 +228,193 @@ const VoteCreatePage = () => {
   }, [meetingForm, schedules]);
 
   return (
-    <div className="nav_top_padding mobile_h_fit">
-      <div className="ml-[16px] mt-[32px]">
-        <PageTitle title="투표 폼 생성하기" />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
-      </div>
-      <div className="mx-[36px] my-[12px]">
-        <TimeSlot
-          meetingForm={meetingForm}
-          members={members}
-          degrees={degrees}
-        />
-      </div>
-      <div className="h-[20px]" />
-      <div className="mx-[36px]">
-        <ListHeader
-          title="가장 많이 겹치는 시간대는?"
-          endComponent={
-            <button
-              className="text-white"
-              onClick={() => {
-                setMinHourDropdownShown((prev) => !prev);
-              }}
-            >
-              <TuneRoundedIcon />
-            </button>
-          }
-        />
-        {isMinHourDropdownShown && (
-          <div className="flex w-full h-[40px] justify-between items-center border-x border-b border-solid border-meety-component_outline_gray p-[6px]">
-            <div className="text-[11px] font-[700]">
-              적어도 몇 시간 이상 모여야 하나요?
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
+      <div className="relative flex flex-col justify-center items-center w-full h-full">
+        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+          <div className="relative flex flex-col justify-center w-full md:w-2/5 h-fit px-2 rounded-xl">
+            <div className="w-full pb-4">
+              <PageTitle title="투표 폼 생성하기" />
             </div>
-            <select
-              id="dropdown"
-              value={selectedMinCellCount}
-              onChange={handleMinHourDropdown}
-              className="text-[10px] font-[700]"
-            >
-              <option value={1}>15분</option>
-              <option value={2}>30분</option>
-              {Array(
-                Math.floor(
-                  calculateIntervals(
-                    meetingForm.start_time,
-                    meetingForm.end_time
-                  ) / 4
-                )
-              )
-                .fill()
-                .map((_, index) => (
-                  <option key={index} value={4 * (index + 1)}>
-                    {index + 1}시간
-                  </option>
-                ))}
-            </select>
-          </div>
-        )}
-        <ScheduleList schedules={sortedSchedules} />
-      </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <div className="ml-[20px]">
-        <StepTitle title="2. 투표지를 만들어보세요." />
-      </div>
-      <div className="mt-[12px] mx-[36px]">
-        <ListHeader title="투표 선택지를 추가해보세요." />
-        <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px] shadow-lg">
-          <div className="flex justify-between p-[8px]">
-            <div className="text-[14px] font-[700]">(1) 날짜를 입력하세요.</div>
-            <select
-              id="dropdown"
-              value={optionDate}
-              onChange={(event) => setOptionDate(event.target.value)}
-              className="text-[14px] font-[700]"
-            >
-              {sortedSchedulesForOption.map((schedule) => {
-                const [year, month, day] = schedule.date.match(/(\d+)/g);
-                const monthString = month.padStart(2, "0");
-                const dayString = day.padStart(2, "0");
-                const date = `${year}-${monthString}-${dayString}`;
-                return (
-                  <option key={date} value={date}>
-                    {date}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="flex justify-between p-[8px]">
-            <div className="text-[14px] font-[700]">
-              (2) 시작 시간을 입력하세요.
+            <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
+
+            <TimeSlot
+              meetingForm={meetingForm}
+              members={members}
+              degrees={degrees}
+            />
+
+            <div className="mt-3 shadow-md shadow-stone-400 rounded-t-[10px]">
+              <ListHeader
+                title="가장 많이 겹치는 시간대는?"
+                endComponent={
+                  <button
+                    className="text-white"
+                    onClick={() => {
+                      setMinHourDropdownShown((prev) => !prev);
+                    }}
+                  >
+                    <TuneRoundedIcon />
+                  </button>
+                }
+              />
+              {isMinHourDropdownShown && (
+                <div className="flex w-full h-[40px] justify-between items-center border-solid border-x-[1.5px] border-b-[2px] border-meety-component_outline_gray p-[6px] text-meety-text_dark_gray">
+                  <div className="text-xs font-bold pl-1">
+                    적어도 몇 시간 이상 모여야 하나요?
+                  </div>
+                  <select
+                    id="dropdown"
+                    value={selectedMinCellCount}
+                    onChange={handleMinHourDropdown}
+                    className="text-xs font-bold"
+                  >
+                    <option value={1}>15분</option>
+                    <option value={2}>30분</option>
+                    {Array(
+                      Math.floor(
+                        calculateIntervals(
+                          meetingForm.start_time,
+                          meetingForm.end_time
+                        ) / 4
+                      )
+                    )
+                      .fill()
+                      .map((_, index) => (
+                        <option key={index} value={4 * (index + 1)}>
+                          {index + 1}시간
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+              <ScheduleList schedules={sortedSchedules} />
             </div>
-            <select
-              id="dropdown"
-              value={optionStartTime}
-              onChange={(event) => setOptionStartTime(event.target.value)}
-              className="text-[14px] font-[700]"
-            >
-              {getOptionStartTimeList(
-                sortedSchedulesForOption,
-                optionDate
-              )?.map((time, index) => (
-                <option key={index} value={time}>
-                  {formatTime(time)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex justify-between p-[8px]">
-            <div className="text-[14px] font-[700]">
-              (3) 종료 시간을 입력하세요.
+
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
             </div>
-            <select
-              id="dropdown"
-              value={optionEndTime}
-              onChange={(event) => setOptionEndTime(event.target.value)}
-              className="text-[14px] font-[700]"
-            >
-              {getOptionEndTimeList(
-                sortedSchedulesForOption,
-                optionDate,
-                optionStartTime
-              )?.map((time, index) => (
-                <option key={index} value={time}>
-                  {formatTime(time)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg mx-[10px] mt-[20px] mb-[12px]">
-            <button
-              className="w-full h-full font-[700] text-white"
-              onClick={addVoteOption}
-            >
-              추가하기
-            </button>
+
+            <StepTitle title="2. 투표지를 만들어보세요." />
+
+            <div className="mt-3 shadow-md shadow-stone-400 rounded-[10px]">
+              <ListHeader title="투표 선택지를 추가해보세요." />
+              <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px]">
+                <div className="flex justify-between p-[8px]">
+                  <div className="text-sm font-bold">
+                    (1) 날짜를 입력하세요.
+                  </div>
+                  <select
+                    id="dropdown"
+                    value={optionDate}
+                    onChange={(event) => setOptionDate(event.target.value)}
+                    className="text-[14px] font-[700]"
+                  >
+                    {sortedSchedulesForOption.map((schedule) => {
+                      const [year, month, day] = schedule.date.match(/(\d+)/g);
+                      const monthString = month.padStart(2, "0");
+                      const dayString = day.padStart(2, "0");
+                      const date = `${year}-${monthString}-${dayString}`;
+                      return (
+                        <option key={date} value={date}>
+                          {date}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="flex justify-between p-[8px]">
+                  <div className="text-sm font-bold">
+                    (2) 시작 시간을 입력하세요.
+                  </div>
+                  <select
+                    id="dropdown"
+                    value={optionStartTime}
+                    onChange={(event) => setOptionStartTime(event.target.value)}
+                    className="text-[14px] font-[700] w-fit"
+                  >
+                    {getOptionStartTimeList(
+                      sortedSchedulesForOption,
+                      optionDate
+                    )?.map((time, index) => (
+                      <option key={index} value={time}>
+                        {formatTime(time)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-between p-[8px]">
+                  <div className="text-[14px] font-[700]">
+                    (3) 종료 시간을 입력하세요.
+                  </div>
+                  <select
+                    id="dropdown"
+                    value={optionEndTime}
+                    onChange={(event) => setOptionEndTime(event.target.value)}
+                    className="text-[14px] font-[700]"
+                  >
+                    {getOptionEndTimeList(
+                      sortedSchedulesForOption,
+                      optionDate,
+                      optionStartTime
+                    )?.map((time, index) => (
+                      <option key={index} value={time}>
+                        {formatTime(time)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-center items-center h-[40px] bg-gradient-to-r from-meety-btn_light_blue to-meety-btn_dark_blue text-[16px] rounded-[10px] shadow-lg mx-[10px] mt-[20px] mb-[12px]">
+                  <button
+                    className="w-full h-full font-[700] text-white"
+                    onClick={addVoteOption}
+                  >
+                    추가하기
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {voteOptions.length != 0 && (
+              <div>
+                <div className="mt-10 shadow-md shadow-stone-400 rounded-t-[10px]">
+                  <ListHeader title="다음과 같이 투표를 진행합니다." />
+                </div>
+
+                <div>
+                  {voteOptions.map((option, index) => (
+                    <OptionListItem
+                      key={index}
+                      index={index}
+                      option={option}
+                      endComponent={
+                        <button
+                          className="text-meety-del_red mb-[1px]"
+                          onClick={() => removeVoteOption(index)}
+                        >
+                          <RemoveCircleOutlineRoundedIcon />
+                        </button>
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="h-20 flex flex-col justify-center items-center">
+              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
+            </div>
+
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
+              <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
+              <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 투표 폼을 다른 사람들에게 공유할 수 있습니다." />
+            </div>
+
+            <GradationButton
+              text="투표 폼 생성하기"
+              onButtonClick={onVoteCreateButtonClick}
+            />
           </div>
         </div>
-      </div>
-      <div className="mx-[36px] mt-[34px]">
-        <ListHeader title="다음과 같이 투표를 진행합니다." />
-        {voteOptions.map((option, index) => (
-          <OptionListItem
-            key={index}
-            index={index}
-            option={option}
-            endComponent={
-              <button
-                className="text-meety-del_red"
-                onClick={() => removeVoteOption(index)}
-              >
-                <RemoveCircleOutlineRoundedIcon />
-              </button>
-            }
-          />
-        ))}
-      </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />
-      </div>
-      <div className="mx-[48px] mt-[8px]">
-        <SubMessage title="'투표 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
-        <SubMessage title="투표 폼을 다른 사람들에게 공유할 수 있습니다." />
-      </div>
-      <div className="pt-[20px] pb-[28px] px-[20px]">
-        <GradationButton
-          text="투표 폼 생성하기"
-          onButtonClick={async () => {
-            await createVoteForm(
-              id,
-              { vote_choices: groupByDate(voteOptions) },
-              handleError
-            );
-            navigate(`/vote/fill/${id}`, { replace: true });
-          }}
-        />
       </div>
     </div>
   );

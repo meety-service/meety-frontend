@@ -146,7 +146,7 @@ const TimeSlot = ({
                               ? i === startRow && j === startCol
                                 ? " bg-black"
                                 : " bg-[#00ff00]"
-                              : " bg-[#0000ff]")
+                              : " bg-[#4373ED]")
                           }
                           style={{
                             opacity: isSelectable
@@ -156,7 +156,7 @@ const TimeSlot = ({
                                 ? 1
                                 : 0
                               : degrees[i] && degrees[i][j]
-                              ? degrees[i][j] / members
+                              ? (degrees[i][j] / members) * 0.8 + 0.2
                               : 0,
                           }}
                         />

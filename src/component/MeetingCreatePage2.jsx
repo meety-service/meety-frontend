@@ -203,12 +203,10 @@ const MeetingCreatePage2 = () => {
               <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
             </div>
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2 pb-6">
-            <StepTitle title="4. 미팅을 생성할 준비가 되셨나요?" />
-              <SubMessage title="'미팅 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해" />
-              <SubMessage title="미팅 폼을 다른 사람들에게 공유할 수 있습니다." />
+              <StepTitle title="4. 미팅을 생성할 준비가 되셨나요?" />
+              <SubMessage title="'미팅 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 미팅 폼을 다른 사람들에게 공유할 수 있습니다." />
             </div>
 
-              
             <GradationButton
               text="미팅 폼 생성하기"
               onButtonClick={onCreateButtonClick}
