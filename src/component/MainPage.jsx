@@ -127,12 +127,12 @@ const MainPage = () => {
   return (
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-screen">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
-        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+        <div className="relative w-full h-full flex flex-col justify-center items-center px-5 pb-10">
           <div className="relative flex flex-col justify-center space-y-2 w-full h-full md:w-2/5 py-2 px-2 rounded-xl">
-            <div className="w-full pb-4">
-              <PageTitle title="미팅 폼 작성하기" />
+            <div className="absolute top-2 w-full mt-4">
+              <PageTitle title="내 미팅" />
             </div>
-            <div className="w-full h-full flex flex-col justify-center items-center pb-8">
+            <div className="w-full h-full flex flex-col justify-center items-center pt-14 pb-24">
               {/*옵션 스크롤 바*/}
               <div className="w-full h-full py-2 px-2 bg-meety-main_background rounded-xl shadow-stone-300 shadow-md">
                 <div className="w-full h-full space-y-4 overflow-y-scroll scrollbar-hide p-1 rounded-xl shadow-sm">
@@ -155,11 +155,13 @@ const MainPage = () => {
                   ))}
                 </div>
               </div>
+              <div className="absolute w-full bottom-0">
+                <GradationButton
+                  text={"새로운 미팅 생성하기"}
+                  onButtonClick={() => navigate("/meeting/create")}
+                />
+              </div>
             </div>
-            <GradationButton
-              text={"새로운 미팅 생성하기"}
-              onButtonClick={() => navigate("/meeting/create")}
-            />
           </div>
         </div>
       </div>

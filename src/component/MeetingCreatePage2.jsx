@@ -11,6 +11,7 @@ import { dateFormatter } from "../utils/dateFormatter";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import SubMessage from "./SubMessage";
+import FollowLineArea from "./FollowLineArea";
 
 const MeetingCreatePage2 = () => {
   useLoginCheck();
@@ -122,7 +123,7 @@ const MeetingCreatePage2 = () => {
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
           <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
-            <div className="w-full pb-4">
+          <div className="w-full pb-6">
               <PageTitle title="미팅 폼 생성하기" />
             </div>
             <StepTitle
@@ -136,6 +137,7 @@ const MeetingCreatePage2 = () => {
                 value={title}
                 onChange={handleTitleChange}
                 className="pl-3 h-12 w-full rounded-full"
+                style={{ outline: 'none' }}
               />
             </div>
             <div className="h-20 flex flex-col justify-center items-center">
@@ -152,9 +154,9 @@ const MeetingCreatePage2 = () => {
               inline
               highlightDates={selectedDates}
             ></DatePicker>
-            <div className="h-20 flex flex-col justify-center items-center">
-              <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
-            </div>
+
+            <FollowLineArea />
+
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2">
               <StepTitle title="3.미팅은 어느 시간에 진행되어야 하나요?" />
               <div className="w-full flex flex-row h-[80px] space-x-2 justify-center">
@@ -199,9 +201,9 @@ const MeetingCreatePage2 = () => {
                 </div>
               </div>
             </div>
-            <div className="h-24 flex flex-col justify-center items-center">
-              <KeyboardDoubleArrowDownIcon style={{ fill: "#BFBCC6" }} />
-            </div>
+
+            <FollowLineArea />
+
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2 pb-6">
               <StepTitle title="4. 미팅을 생성할 준비가 되셨나요?" />
               <SubMessage title="'미팅 폼 생성하기' 버튼을 클릭하면 다음 페이지에서 링크를 통해 미팅 폼을 다른 사람들에게 공유할 수 있습니다." />

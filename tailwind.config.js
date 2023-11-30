@@ -21,7 +21,8 @@ module.exports = {
           drag_bar_outline_gray: "#E9E9E9",
           component_outline_gray: "#CFCFCF",
           exp_text_gray: "#A2A2A2",
-          snackbar_background: "#202123"
+          snackbar_background: "#202123",
+          link_btn_gray: "#929698"
         },
       },
     },

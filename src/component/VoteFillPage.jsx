@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import KeyboardDoubleArrowDownRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowDownRounded";
+
 import {
   PageTitle,
   StepTitle,
@@ -24,6 +25,8 @@ import { useErrorCheck } from "../hooks/useErrorCheck";
 import { calculateIntervals } from "./TimeSlot";
 import { useRecoilCallback } from "recoil";
 import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import LinkButton from "./LinkButton";
+import FollowLineArea from "./FollowLineArea";
 
 const VoteFillPage = () => {
   const { id } = useParams();
@@ -130,95 +133,102 @@ const VoteFillPage = () => {
   }, [myVotes]);
 
   return (
-    <div className="nav_top_padding mobile_h_fit">
-      <div className="relative">
-        <div className="absolute top-[12px] right-[12px] flex justify-end">
-          <button
-            className="text-[14px] text-right underline"
-            onClick={async () => {
-              await navigator.clipboard.writeText(window.location.href);
-              setSnackbarText("링크가 클립보드에 복사되었습니다.");
-              openSnackbar();
-            }}
-          >
-            <div>링크 복사하기</div>
-          </button>
-        </div>
-      </div>
-      <div className="ml-[16px] mt-[32px]">
-        <PageTitle title="투표 폼 작성하기" />
-      </div>
-      <div className="ml-[20px] mt-[20px]">
-        <StepTitle title="1. 내 미팅 가능 시간을 확인해보세요." />
-      </div>
-      <div className="mx-[36px] my-[12px]">
-        <TimeSlot
-          meetingForm={meetingForm}
-          members={members}
-          degrees={degrees}
-        />
-      </div>
-      <div className="mx-[20px]">
-        <ListHeader title="미팅을 원하는 시간대를 선택하세요." />
-        {voteOptions.map((option, index) => (
-          <button
-            key={index}
-            className={
-              "flex w-full border border-solid rounded-[10px] shadow-lg p-[6px] my-[15px]" +
-              (isSelected[index]
-                ? " border-meety-btn_dark_blue"
-                : " border-meety-component_outline_gray")
-            }
-            onClick={() => handleSelect(index)}
-          >
-            <div className="flex w-full justify-between items-center">
-              <div className="flex items-center">
-                <IndexedItemHeader index={index} />
-                <div className="w-[6px]" />
-                <div className="text-[12px] font-[700]">
-                  {formatOption(option)}
+    <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
+      <div className="relative flex flex-col justify-center items-center w-full h-full">
+        <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
+          <div className="relative flex flex-col justify-center w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
+            <div className="absolute top-0 right-0 h-fit z-10">
+              <LinkButton />
+            </div>
+            <div className="relative flex flex-col justify-center space-y-2 w-full h-full">
+              <div className="w-full pb-6">
+                <PageTitle title="투표 폼 작성하기" />
+              </div>
+              <StepTitle
+                title="1. 내 미팅 가능 시간을 확인해보세요."
+                className="left-0 top-0"
+              />
+
+              <TimeSlot
+                meetingForm={meetingForm}
+                members={members}
+                degrees={degrees}
+              />
+
+              <div className="mt-10 shadow-md shadow-stone-400 rounded-t-[10px]">
+                <ListHeader title="미팅을 원하는 시간대를 선택하세요." />
+              </div>
+
+              <div>
+                {voteOptions.map((option, index) => (
+                  <button
+                    key={index}
+                    className={
+                      "flex w-full border-[1.5px] border-solid rounded-[10px] shadow-lg px-[6px] py-[8px] my-[14px]" +
+                      (isSelected[index]
+                        ? " border-meety-btn_dark_blue"
+                        : " border-meety-component_outline_gray")
+                    }
+                    onClick={() => handleSelect(index)}
+                  >
+                    <div className="w-full h-full flex flex-row justify-between items-center">
+                      <div className="w-full flex flex-row items-center">
+                        <IndexedItemHeader index={index} />
+                        <div className="pl-[6px] text-sm font-[700] pb-[1px]">
+                          {formatOption(option)}
+                        </div>
+                      </div>
+
+                      <div className="text-[12px] w-[50px]">
+                        {option.count}/{members} (명)
+                      </div>
+                    </div>
+                  </button>
+                ))}
+                <div className="text-[12px] text-right pr-2">
+                  {members}명 중 {participants}명 참여
                 </div>
               </div>
-              <div className="text-[12px]">
-                {option.count}/{members} (명)
+
+              <FollowLineArea />
+
+              <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
+                <StepTitle title="2. 투표 폼 작성이 모두 끝나셨나요?" />
+                <SubMessage title="아래의 제출 버튼을 클릭하여 다른 사람들에게 투표한 내용을 공유하고, 투표 현황을 확인할 수 있습니다." />
               </div>
+
+              <GradationButton
+                text="제출하기"
+                onButtonClick={async () => {
+                  const vote_choices = voteOptions
+                    .filter((_, index) => isSelected[index])
+                    .map((option) => ({
+                      id: option.id,
+                    }));
+
+                  if (meetingInfo.user_state === 2) {
+                    await submitVotes(
+                      id,
+                      { vote_choices: vote_choices },
+                      handleError
+                    );
+                  } else if (meetingInfo.user_state === 3) {
+                    await editVotes(
+                      id,
+                      { vote_choices: vote_choices },
+                      handleError
+                    );
+                  } else {
+                    throw new Error("unexpected user_state");
+                  }
+
+                  navigate(`/vote/view/${id}`, { replace: true });
+                }}
+              />
             </div>
-          </button>
-        ))}
-        <div className="text-[12px] text-right">
-          {members}명 중 {participants}명 참여
+          </div>
         </div>
       </div>
-      <div className="flex w-full justify-center py-[40px]">
-        <KeyboardDoubleArrowDownRoundedIcon />
-      </div>
-      <StepTitle title="2. 투표 폼 작성이 모두 끝나셨나요?" />
-      <div className="px-[40px]">
-        <SubMessage title="아래의 제출 버튼을 클릭하여 다른 사람들에게 투표한 내용을 공유하고, " />
-        <SubMessage title="투표 현황을 확인할 수 있습니다." />
-      </div>
-      <div className="h-[20px]" />
-      <GradationButton
-        text="제출하기"
-        onButtonClick={async () => {
-          const vote_choices = voteOptions
-            .filter((_, index) => isSelected[index])
-            .map((option) => ({
-              id: option.id,
-            }));
-
-          if (meetingInfo.user_state === 2) {
-            await submitVotes(id, { vote_choices: vote_choices }, handleError);
-          } else if (meetingInfo.user_state === 3) {
-            await editVotes(id, { vote_choices: vote_choices }, handleError);
-          } else {
-            throw new Error("unexpected user_state");
-          }
-
-          navigate(`/vote/view/${id}`, { replace: true });
-        }}
-      />
-      <div className="h-[40px]" />
     </div>
   );
 };
