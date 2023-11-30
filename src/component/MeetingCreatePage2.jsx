@@ -12,11 +12,17 @@ import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import SubMessage from "./SubMessage";
 import FollowLineArea from "./FollowLineArea";
+import TimeSelectBar from "./TimeSelectBar";
+import { formatTime } from "./VoteCreatePage";
+import { useRecoilCallback } from "recoil";
+import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 
 const MeetingCreatePage2 = () => {
   useLoginCheck();
 
   const navigate = useNavigate();
+
+  const hoursInDay = 24;
 
   const [title, setTitle] = useState("");
   const [error, handleError] = useState(undefined);
@@ -24,23 +30,25 @@ const MeetingCreatePage2 = () => {
   const [timezone, setTimezone] = useState([]);
   const [selectedTimezone, setSelectedTimeZone] = useState("");
   const [timeOptions, setTimeOptions] = useState([]);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState("00:00:00");
+  const [endTime, setEndTime] = useState("24:00:00");
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
   };
 
   const createTimeOptions = () => {
-    const time_options = [];
-    for (let hour = 0; hour <= 23; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}`;
-        time_options.push(time);
-      }
-    }
+    const time_options = Array(hoursInDay + 1)
+      .fill()
+      .map((_, i) => `${i.toString().padStart(2, "0")}:00`);
     setTimeOptions(time_options);
   };
 
@@ -63,6 +71,27 @@ const MeetingCreatePage2 = () => {
   };
 
   const onCreateButtonClick = async () => {
+    if (title === "") {
+      setSnackbarText("미팅 이름을 입력해주세요.");
+      openSnackbar();
+      return;
+    }
+    if (selectedDates.length === 0) {
+      setSnackbarText("미팅 날짜를 선택해주세요.");
+      openSnackbar();
+      return;
+    }
+    if (selectedTimezone === "") {
+      setSnackbarText("미팅 표준시를 선택해주세요.");
+      openSnackbar();
+      return;
+    }
+    if (startTime === endTime) {
+      setSnackbarText("미팅 시간을 선택해주세요.");
+      openSnackbar();
+      return;
+    }
+
     const data = {
       name: title,
       available_dates: selectedDates.map((selectedDate) => {
@@ -108,6 +137,28 @@ const MeetingCreatePage2 = () => {
         handleError(error);
       });
     console.log("Fetch Timezone end", timezone);
+  };
+
+  const handleStartTimeChange = (event) => {
+    let _startTime = event.value + ":00";
+    let _endTime = endTime;
+    if (_startTime > _endTime) {
+      [_startTime, _endTime] = [_endTime, _startTime];
+    }
+
+    setStartTime(_startTime);
+    setEndTime(_endTime);
+  };
+
+  const handleEndTimeChange = (event) => {
+    let _startTime = startTime;
+    let _endTime = event.value + ":00";
+    if (_startTime > _endTime) {
+      [_startTime, _endTime] = [_endTime, _startTime];
+    }
+
+    setStartTime(_startTime);
+    setEndTime(_endTime);
   };
 
   useEffect(() => {
@@ -178,28 +229,31 @@ const MeetingCreatePage2 = () => {
                 <div className="flex flex-col justify-end h-full w-[50%]">
                   <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
                     <Dropdown
-                      options={timeOptions}
-                      onChange={(event) => {
-                        setStartTime(event.value + ":00");
-                      }}
-                      value={"00:00"}
+                      options={timeOptions.slice(0, hoursInDay)}
+                      onChange={handleStartTimeChange}
+                      value={formatTime(startTime)}
                       placeholder="Select an option"
                     />
                     <StepTitle title="에서" />
                   </div>
                   <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
                     <Dropdown
-                      options={timeOptions}
-                      onChange={(event) => {
-                        setEndTime(event.value + ":00");
-                      }}
-                      value={"00:00"}
+                      options={timeOptions.slice(1, hoursInDay + 1)}
+                      onChange={handleEndTimeChange}
+                      value={formatTime(endTime)}
                       placeholder="Select an option"
                     />
                     <StepTitle title="사이" />
                   </div>
                 </div>
               </div>
+
+              <TimeSelectBar
+                startTime={startTime}
+                setStartTime={setStartTime}
+                endTime={endTime}
+                setEndTime={setEndTime}
+              />
             </div>
 
             <FollowLineArea />
