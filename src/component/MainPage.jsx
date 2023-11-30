@@ -116,12 +116,13 @@ const MainPage = () => {
   useLoginCheck(); // 로그인 여부 확인 -> 미 로그인 시 로그인 페이지로 이동
   useErrorCheck(error);
 
-  // 서버에서 미팅 정보 fetch
   useEffect(() => {
     const fetchData = async () => {
       fetchMeetingInfo();
     };
     fetchData();
+
+    window.scrollTo(0,0); // 페이지 최상단으로 이동
   }, []);
 
   return (

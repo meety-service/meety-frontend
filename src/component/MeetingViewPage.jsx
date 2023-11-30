@@ -86,6 +86,8 @@ const MeetingViewPage = () => {
       });
     };
     fetchData();
+
+    window.scrollTo(0, 0); // 페이지 최상단으로 이동
   }, []);
 
   useEffect(() => {

@@ -65,6 +65,10 @@ const MeetingFillPage = () => {
     fetchMeetingTimes();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo(0,0); // 페이지 최상단으로 이동
+  }, []);
+
   const handleSubmit = async () => {
     try {
       await axios.post("/api/meetingTimes", sliderValues);

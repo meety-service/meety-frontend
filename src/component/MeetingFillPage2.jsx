@@ -100,6 +100,8 @@ const MeetingFillPage2 = () => {
       });
     };
     fetchData();
+
+    window.scrollTo(0, 0); // 페이지 최상단으로 이동
   }, []);
 
   useEffect(() => {
@@ -151,7 +153,7 @@ const MeetingFillPage2 = () => {
                   value={nickname}
                   onChange={(event) => setNickName(event.target.value)}
                   className="pl-3 h-12 w-full rounded-full"
-                  style={{ outline: 'none' }}
+                  style={{ outline: "none" }}
                 />
               </div>
 
