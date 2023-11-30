@@ -22,6 +22,7 @@ import { calculateIntervals } from "./TimeSlot";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
 import { useRecoilCallback } from "recoil";
 import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import FollowLineArea from "./FollowLineArea";
 
 const MeetingViewPage = () => {
   const { id } = useParams();
@@ -129,7 +130,7 @@ const MeetingViewPage = () => {
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
           <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
-            <div className="w-full pb-4">
+            <div className="w-full pb-6">
               <PageTitle title="미팅 폼 작성 완료" />
             </div>
             <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
@@ -185,9 +186,8 @@ const MeetingViewPage = () => {
               )}
               <ScheduleList schedules={sortedSchedules} />
             </div>
-            <div className="mt-4 h-20 flex flex-col justify-center items-center">
-              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
-            </div>
+
+            <FollowLineArea />
 
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
               <StepTitle title="2. 혹시 수정할 내용이 있으신가요?" />
@@ -200,17 +200,13 @@ const MeetingViewPage = () => {
             />
             {meetingInfo.isMaster == 1 && (
               <div>
-                <div className="h-20 flex flex-col justify-center items-center">
-                  <KeyboardDoubleArrowDownRoundedIcon
-                    style={{ fill: "#BFBCC6" }}
-                  />
-                </div>
+                <FollowLineArea />
 
                 <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
                   <StepTitle title="3.투표를 진행할까요?" />
                   <SubMessage title="아래의 '투표 진행하기 버튼을 클릭하여 미팅 폼 작성을 마감하고, 최종 미팅 일자 결정을 위한 투표 폼을 생성할 수 있습니다." />
                 </div>
-                
+
                 <GradationButton
                   text="투표 진행하기"
                   onButtonClick={() => {
@@ -222,7 +218,6 @@ const MeetingViewPage = () => {
                     }
                   }}
                 />
-                <div className="h-[40px]" />
               </div>
             )}
           </div>

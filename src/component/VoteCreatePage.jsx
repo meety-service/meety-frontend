@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import KeyboardDoubleArrowDownRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowDownRounded";
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import {
@@ -25,6 +24,8 @@ import { calculateIntervals } from "./TimeSlot";
 import { dateParser } from "../utils/dateParser";
 import { useRecoilCallback } from "recoil";
 import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import FollowLineArea from "./FollowLineArea";
+import Dropdown from "react-dropdown";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -128,13 +129,12 @@ const VoteCreatePage = () => {
       setSnackbarText("작성된 투표 선택지가 없습니다.");
       openSnackbar();
     } else {
-      
-        await createVoteForm(
-          id,
-          { vote_choices: groupByDate(voteOptions) },
-          handleError
-        );
-        navigate(`/vote/fill/${id}`, { replace: true });
+      await createVoteForm(
+        id,
+        { vote_choices: groupByDate(voteOptions) },
+        handleError
+      );
+      navigate(`/vote/fill/${id}`, { replace: true });
     }
   };
 
@@ -231,8 +231,8 @@ const VoteCreatePage = () => {
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
-          <div className="relative flex flex-col justify-center w-full md:w-2/5 h-fit px-2 rounded-xl">
-            <div className="w-full pb-4">
+          <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
+            <div className="w-full pb-6">
               <PageTitle title="투표 폼 생성하기" />
             </div>
             <StepTitle title="1. 모든 참여자의 미팅 가능 시간을 확인해보세요." />
@@ -258,7 +258,7 @@ const VoteCreatePage = () => {
                 }
               />
               {isMinHourDropdownShown && (
-                <div className="flex w-full h-[40px] justify-between items-center border-solid border-x-[1.5px] border-b-[2px] border-meety-component_outline_gray p-[6px] text-meety-text_dark_gray">
+                <div className="flex w-full h-[40px] justify-between items-center border-solid border-x-[1.5px] border-b-[1.5px] border-meety-component_outline_gray p-[6px] text-meety-text_dark_gray">
                   <div className="text-xs font-bold pl-1">
                     적어도 몇 시간 이상 모여야 하나요?
                   </div>
@@ -290,9 +290,7 @@ const VoteCreatePage = () => {
               <ScheduleList schedules={sortedSchedules} />
             </div>
 
-            <div className="h-20 flex flex-col justify-center items-center">
-              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
-            </div>
+            <FollowLineArea />
 
             <StepTitle title="2. 투표지를 만들어보세요." />
 
@@ -300,7 +298,7 @@ const VoteCreatePage = () => {
               <ListHeader title="투표 선택지를 추가해보세요." />
               <div className="border border-solid border-meety-component_outline_gray rounded-b-[10px]">
                 <div className="flex justify-between p-[8px]">
-                  <div className="text-sm font-bold">
+                  <div className="text-sm font-bold pl-1">
                     (1) 날짜를 입력하세요.
                   </div>
                   <select
@@ -323,7 +321,7 @@ const VoteCreatePage = () => {
                   </select>
                 </div>
                 <div className="flex justify-between p-[8px]">
-                  <div className="text-sm font-bold">
+                  <div className="text-sm font-bold pl-1">
                     (2) 시작 시간을 입력하세요.
                   </div>
                   <select
@@ -343,7 +341,7 @@ const VoteCreatePage = () => {
                   </select>
                 </div>
                 <div className="flex justify-between p-[8px]">
-                  <div className="text-[14px] font-[700]">
+                  <div className="text-sm font-bold pl-1">
                     (3) 종료 시간을 입력하세요.
                   </div>
                   <select
@@ -400,9 +398,7 @@ const VoteCreatePage = () => {
               </div>
             )}
 
-            <div className="h-20 flex flex-col justify-center items-center">
-              <KeyboardDoubleArrowDownRoundedIcon style={{ fill: "#BFBCC6" }} />
-            </div>
+            <FollowLineArea />
 
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 pb-6">
               <StepTitle title="3. 투표를 생성할 준비가 되셨나요?" />

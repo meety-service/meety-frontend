@@ -51,11 +51,22 @@
   width: 100%;
   padding-bottom: 5px;
   color: white;
+  border: 1.5px solid #E6E6E6;
+  border-radius: 16px 16px 5px 5px;
 }
 
-.react-datepicker .react-datepicker__navigation {
-  height: 20%;
+.react-datepicker .react-datepicker__navigation{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  margin-top:6px;
   color: #FFFFFF;
+}
+
+.react-datepicker .react-datepicker__navigation .react-datepicker__navigation-icon {
+  position: relative;
+  margin-top:12px;
 }
 
 .react-datepicker__month-container .react-datepicker__month {
@@ -99,8 +110,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  height: 44px;
   border-radius: 15px 15px 0px 0px;
   background: linear-gradient(45deg, #779CF9, #1550E8);
 }
@@ -285,4 +295,48 @@
   border-right: 2px solid #CFCFCF;
   border-bottom: 2px solid #CFCFCF;
   background-color: #FAFAFA;
+}
+
+
+/* Webkit 엔진 브라우저 (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 10px; /* 스크롤바 너비 조정 */
+  height: 10px;
+  background-color: transparent;
+  margin: 10px;
+}
+
+/* Webkit 엔진 브라우저의 스크롤바 track(배경) 스타일링 */
+::-webkit-scrollbar-track {
+  background-color: #FAFAFA;
+}
+
+/* Webkit 엔진 브라우저의 스크롤바 thumb(스크롤바 바) 스타일링 */
+::-webkit-scrollbar-thumb {
+  background-color: #E1E1E9; /* 스크롤바 바 색상 설정 */
+  border-radius: 3px; /* 스크롤바 바 모서리 둥글게 만들기 */
+}
+
+/* 다른 브라우저 (Firefox, Edge 등) */
+/* Note: Mozilla Firefox는 -webkit- 접두사를 사용하지 않습니다. */
+/* Firefox 엔진 브라우저의 스크롤바 스타일링 */
+/* Firefox는 커스텀 스크롤바를 지원하지 않을 수 있으므로 브라우저 버전에 따라 동작이 다를 수 있습니다. */
+* {
+  scrollbar-width: thin; /* 스크롤바 너비 설정 (thin 또는 auto) */
+  scrollbar-color: #E1E1E9 transparent; /* 스크롤바 색상 설정 */
+}
+
+/* Microsoft Edge 엔진 브라우저의 스크롤바 스타일링 */
+/* Microsoft Edge는 -webkit- 접두사를 사용하지 않습니다. */
+/* Edge 엔진 브라우저의 스크롤바 track(배경) 스타일링 */
+/* Edge 엔진 브라우저의 스크롤바 thumb(스크롤바 바) 스타일링 */
+/* Edge 엔진 브라우저 역시 커스텀 스크롤바를 지원하지 않을 수 있으므로 브라우저 버전에 따라 동작이 다를 수 있습니다. */
+*::-ms-scrollbar {
+  width: 10px; /* 스크롤바 너비 설정 */
+  background-color: transparent; /* 배경 색상 설정 */
+}
+
+*::-ms-scrollbar-thumb {
+  background-color: #E1E1E9; /* 스크롤바 바 색상 설정 */
+  border-radius: 3px; /* 스크롤바 바 모서리 둥글게 만들기 */
 }

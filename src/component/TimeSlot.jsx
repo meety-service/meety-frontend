@@ -60,7 +60,7 @@ const TimeSlot = ({
   }, [selected]);
 
   return (
-    <div className="h-fit w-full pt-2">
+    <div className="h-fit w-full pt-1">
       <div className="h-fit w-full absolute right-0 flex justify-end space-x-2 items-center text-[12px] font-[700] text-right mb-[20px]">
         <p>표준시 (Time Zone)</p>
         <div className="flex w-[142px] h-[26px] items-center border-[1.5px] border-solid border-meety-component_outline_gray rounded-md px-[6px]">
@@ -104,13 +104,13 @@ const TimeSlot = ({
               </div>
             )}
           </div>
-          <div className="w-full flex flex-row overflow-auto">
+          <div className="w-fit flex flex-row overflow-auto">
             {meeting_dates.map((meeting_date, i) => {
               const { available_date } = meeting_date;
               const weekday = new Date(available_date).getDay();
 
               return (
-                <div key={i} className="flex flex-col items-center mx-[4px]">
+                <div key={i} className="flex flex-col items-center mx-[4px] pb-2">
                   <div className="text-[8px] font-[700]">
                     {formatDate(available_date)}
                   </div>
@@ -225,8 +225,9 @@ const calculateTimeAfterIntervals = (startTime, intervals) => {
   const endMinutes = startMinutes + intervals * 15;
   let hours = Math.floor(endMinutes / 60);
   const minutes = endMinutes % 60;
-  const period = hours < 12 ? "AM" : "PM";
-  if (hours > 12) hours -= 12;
+  // const period = hours < 12 ? "AM" : "PM";
+  // if (hours > 12) hours -= 12;
+  const period = "";
   return `${hours < 10 ? "0" : ""}${hours}:${
     minutes < 10 ? "0" : ""
   }${minutes} ${period}`;
