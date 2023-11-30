@@ -185,7 +185,7 @@ const MeetingFillPage2 = () => {
   );
 };
 
-const calculateTimeIn24hAfterIntervals = (startTime, intervals) => {
+export const calculateTimeIn24hAfterIntervals = (startTime, intervals) => {
   const startMinutes = timeToMinutes(startTime);
   const endMinutes = startMinutes + intervals * 15;
   let hours = Math.floor(endMinutes / 60);
