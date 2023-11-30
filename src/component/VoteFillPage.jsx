@@ -14,7 +14,7 @@ import {
 import {
   getMeetingInfo,
   getMeetingForm,
-  getAllSchedules,
+  getMySchedules,
   getVoteChoices,
   submitVotes,
   editVotes,
@@ -55,7 +55,7 @@ const VoteFillPage = () => {
     timezone: "",
   });
   const [members, setMembers] = useState(0);
-  const [schedules, setSchedules] = useState([]);
+  const [selectedTimes, setSelectedTimes] = useState([]);
   const [degrees, setDegrees] = useState([]);
 
   const [participants, setParticipants] = useState(0);
@@ -80,11 +80,11 @@ const VoteFillPage = () => {
       await getMeetingForm(id, handleError).then((data) => {
         setMeetingForm(data);
       });
-      await getAllSchedules(id, handleError).then((data) => {
-        setMembers(data.members);
-        setSchedules(data.schedules);
+      await getMySchedules(id, handleError).then((data) => {
+        setSelectedTimes(data.select_times);
       });
       await getVoteChoices(id, handleError).then((data) => {
+        setMembers(data.members);
         setParticipants(data.participants);
         setVoteOptions(data.vote_choices);
         setMyVotes(data.user_choices);
@@ -101,25 +101,25 @@ const VoteFillPage = () => {
     const newDegrees = Array.from({ length: meeting_dates.length }, () =>
       Array.from({ length: intervals }, () => 0)
     );
-    schedules.forEach((schedule) => {
+    selectedTimes.forEach((selectedTime) => {
       const i = meeting_dates.findIndex(
-        (meeting_date) => meeting_date.available_date === schedule.date
+        (meeting_date) => meeting_date.available_date === selectedTime.date
       );
       if (i === -1) {
         return;
       }
 
-      schedule.times.forEach((time) => {
+      selectedTime.times.forEach((time) => {
         const j = calculateIntervals(start_time, time.time);
-        if (j == intervals) {
+        if (j === intervals) {
           return;
         }
 
-        newDegrees[i][j] += time.available.length;
+        newDegrees[i][j] = 1;
       });
     });
     setDegrees(newDegrees);
-  }, [meetingForm, schedules]);
+  }, [meetingForm, selectedTimes]);
 
   useEffect(() => {
     myVotes.forEach((vote) => {
@@ -153,7 +153,7 @@ const VoteFillPage = () => {
 
               <TimeSlot
                 meetingForm={meetingForm}
-                members={members}
+                members={1}
                 degrees={degrees}
               />
 
