@@ -20,12 +20,11 @@ import {
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
 import { getSortedMeetingInfo } from "../utils/meetingSort";
-import { calculateIntervals } from "./TimeSlot";
-import { dateParser } from "../utils/dateParser";
+import { calculateIntervals, timeToMinutes } from "./TimeSlot";
 import { useRecoilCallback } from "recoil";
 import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
 import FollowLineArea from "./FollowLineArea";
-import Dropdown from "react-dropdown";
+import { calculateTimeIn24hAfterIntervals } from "./MeetingFillPage2";
 
 const VoteCreatePage = () => {
   const { id } = useParams();
@@ -49,7 +48,6 @@ const VoteCreatePage = () => {
   const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
   const [selectedMinCellCount, setSelectedMinCellCount] = useState(1);
   const [sortedSchedules, setSortedSchedules] = useState([]);
-  const [sortedSchedulesForOption, setSortedSchedulesForOption] = useState([]);
 
   const handleMinHourDropdown = (event) => {
     setSelectedMinCellCount(event.target.value);
@@ -63,6 +61,7 @@ const VoteCreatePage = () => {
     );
   };
 
+  const [schedulesForOption, setSchedulesForOption] = useState([]);
   const [optionDate, setOptionDate] = useState("");
   const [optionStartTime, setOptionStartTime] = useState("");
   const [optionEndTime, setOptionEndTime] = useState("");
@@ -170,61 +169,57 @@ const VoteCreatePage = () => {
         selectedMinCellCount
       ).schedules
     );
-    setSortedSchedulesForOption(
-      getSortedMeetingInfo(
-        { members, schedules },
-        meetingForm.start_time,
-        meetingForm.end_time,
-        1
-      ).schedules
-    );
-    setOptionDate(meetingForm.meeting_dates[0]?.available_date ?? "");
   }, [members, schedules, meetingForm, selectedMinCellCount]);
 
   useEffect(() => {
+    setSchedulesForOption(getSchedulesForOption(schedules));
+  }, [schedules]);
+
+  useEffect(() => {
+    setOptionDate(schedulesForOption[0]?.date ?? "");
+  }, [schedulesForOption]);
+
+  useEffect(() => {
     const optionStartTimeList = getOptionStartTimeList(
-      sortedSchedulesForOption,
+      schedulesForOption,
       optionDate
     );
     setOptionStartTime(optionStartTimeList?.[0] ?? "");
-  }, [sortedSchedulesForOption, optionDate]);
+  }, [schedulesForOption, optionDate]);
 
   useEffect(() => {
     const optionEndTimeList = getOptionEndTimeList(
-      sortedSchedulesForOption,
+      schedulesForOption,
       optionDate,
       optionStartTime
     );
     setOptionEndTime(optionEndTimeList?.[0] ?? "");
-  }, [sortedSchedulesForOption, optionDate, optionStartTime]);
+  }, [schedulesForOption, optionDate, optionStartTime]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { meeting_dates, start_time, end_time } = meetingForm;
-      const intervals = calculateIntervals(start_time, end_time);
-      const newDegrees = Array.from({ length: meeting_dates.length }, () =>
-        Array.from({ length: intervals }, () => 0)
+    const { meeting_dates, start_time, end_time } = meetingForm;
+    const intervals = calculateIntervals(start_time, end_time);
+    const newDegrees = Array.from({ length: meeting_dates.length }, () =>
+      Array.from({ length: intervals }, () => 0)
+    );
+    schedules.forEach((schedule) => {
+      const i = meeting_dates.findIndex(
+        (meeting_date) => meeting_date.available_date === schedule.date
       );
-      schedules.forEach((schedule) => {
-        const i = meeting_dates.findIndex(
-          (meeting_date) => meeting_date.available_date === schedule.date
-        );
-        if (i === -1) {
+      if (i === -1) {
+        return;
+      }
+
+      schedule.times.forEach((time) => {
+        const j = calculateIntervals(start_time, time.time);
+        if (j == intervals) {
           return;
         }
 
-        schedule.times.forEach((time) => {
-          const j = calculateIntervals(start_time, time.time);
-          if (j == intervals) {
-            return;
-          }
-
-          newDegrees[i][j] += time.available.length;
-        });
+        newDegrees[i][j] += time.available.length;
       });
-      setDegrees(newDegrees);
-    };
-    fetchData();
+    });
+    setDegrees(newDegrees);
   }, [meetingForm, schedules]);
 
   return (
@@ -307,14 +302,10 @@ const VoteCreatePage = () => {
                     onChange={(event) => setOptionDate(event.target.value)}
                     className="text-[14px] font-[700]"
                   >
-                    {sortedSchedulesForOption.map((schedule) => {
-                      const [year, month, day] = schedule.date.match(/(\d+)/g);
-                      const monthString = month.padStart(2, "0");
-                      const dayString = day.padStart(2, "0");
-                      const date = `${year}-${monthString}-${dayString}`;
+                    {schedulesForOption.map((schedule) => {
                       return (
-                        <option key={date} value={date}>
-                          {date}
+                        <option key={schedule.date} value={schedule.date}>
+                          {schedule.date}
                         </option>
                       );
                     })}
@@ -331,7 +322,7 @@ const VoteCreatePage = () => {
                     className="text-[14px] font-[700] w-fit"
                   >
                     {getOptionStartTimeList(
-                      sortedSchedulesForOption,
+                      schedulesForOption,
                       optionDate
                     )?.map((time, index) => (
                       <option key={index} value={time}>
@@ -351,7 +342,7 @@ const VoteCreatePage = () => {
                     className="text-[14px] font-[700]"
                   >
                     {getOptionEndTimeList(
-                      sortedSchedulesForOption,
+                      schedulesForOption,
                       optionDate,
                       optionStartTime
                     )?.map((time, index) => (
@@ -458,60 +449,62 @@ const groupByDate = (flattenedArray) => {
   }, []);
 };
 
-const getOptionStartTimeList = (sortedSchedules, optionDate) => {
+const getSchedulesForOption = (schedules) => {
   const result = [];
 
-  sortedSchedules
-    .find((schedule) => schedule.date === dateParser(optionDate))
-    ?.cases.forEach((element) => {
-      const [start, end] = element.time.split(" ~ ");
-      const [sh, sm] = start.split(":").map(Number);
-      const [eh, em] = end.split(":").map(Number);
-      const s = Math.floor((sh * 60 + sm) / 15);
-      const e = Math.floor((eh * 60 + em) / 15);
+  schedules.forEach((schedule) => {
+    const times = schedule.times
+      .filter((time) => time.available.length > 0)
+      .map((time) => time.time);
 
-      Array(e - s)
-        .fill()
-        .forEach((_, index) => {
-          const n = (s + index) * 15;
-          const h = Math.floor(n / 60);
-          const m = n % 60;
-          const time = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:00`;
-          result.push(time);
-        });
-    });
+    times.sort();
+
+    if (times.length > 0) {
+      result.push({ date: schedule.date, times: times });
+    }
+  });
+
+  result.sort((a, b) => a.date.localeCompare(b.date));
 
   return result;
 };
 
-const getOptionEndTimeList = (sortedSchedules, optionDate, optionStartTime) => {
-  const time = sortedSchedules
-    .find((schedule) => schedule.date === dateParser(optionDate))
-    ?.cases.find((element) => {
-      const [start, end] = element.time.split(" ~ ");
-      return optionStartTime >= start + ":00" && optionStartTime < end + ":00";
-    })?.time;
+const getOptionStartTimeList = (schedulesForOption, optionDate) => {
+  const times = schedulesForOption.find(
+    (schedule) => schedule.date === optionDate
+  )?.times;
+  return times ?? [];
+};
 
-  if (time === undefined) {
+const getOptionEndTimeList = (
+  schedulesForOption,
+  optionDate,
+  optionStartTime
+) => {
+  const times = schedulesForOption.find(
+    (schedule) => schedule.date === optionDate
+  )?.times;
+
+  if (times === undefined) {
     return [];
   }
 
-  const end = time.split(" ~ ")[1];
-  const [sh, sm] = optionStartTime.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  const s = Math.floor((sh * 60 + sm) / 15) + 1;
-  const e = Math.floor((eh * 60 + em) / 15) + 1;
+  const endMinutes = times
+    .filter((time) => time >= optionStartTime)
+    .map((time) => timeToMinutes(time) + 15);
 
-  return Array(e - s)
-    .fill()
-    .map((_, index) => {
-      const n = (s + index) * 15;
-      const h = Math.floor(n / 60);
-      const m = n % 60;
-      const time = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:00`;
-      return time;
-    })
-    .filter((e) => e > optionStartTime);
+  const continuousEndMinutes = [endMinutes[0]];
+  for (let i = 1; i < endMinutes.length; i++) {
+    if (endMinutes[i - 1] + 15 !== endMinutes[i]) {
+      break;
+    }
+
+    continuousEndMinutes.push(endMinutes[i]);
+  }
+
+  return continuousEndMinutes.map((endMinute) =>
+    calculateTimeIn24hAfterIntervals("00:00:00", Math.floor(endMinute / 15))
+  );
 };
 
 export default VoteCreatePage;
