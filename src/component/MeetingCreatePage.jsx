@@ -178,6 +178,10 @@ const MeetingCreatePage = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    window.scrollTo(0,0); // 페이지 최상단으로 이동
+  }, []);
+
   return (
     <div className="nav_top_padding mobile_h_fit p-[14px] bg-white w-screen h-screen">
       <div className="relative flex flex-col items-center justify-center w-full h-full">

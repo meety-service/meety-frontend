@@ -167,6 +167,8 @@ const MeetingCreatePage2 = () => {
     };
     fetchData();
     createTimeOptions();
+
+    window.scrollTo(0, 0); // 페이지 최상단으로 이동
   }, []);
 
   return (
@@ -174,7 +176,7 @@ const MeetingCreatePage2 = () => {
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
           <div className="relative flex flex-col justify-center space-y-2 w-full md:w-2/5 h-fit py-2 px-2 rounded-xl">
-          <div className="w-full pb-6">
+            <div className="w-full pb-6">
               <PageTitle title="미팅 폼 생성하기" />
             </div>
             <StepTitle
@@ -188,7 +190,7 @@ const MeetingCreatePage2 = () => {
                 value={title}
                 onChange={handleTitleChange}
                 className="pl-3 h-12 w-full rounded-full"
-                style={{ outline: 'none' }}
+                style={{ outline: "none" }}
               />
             </div>
             <div className="h-20 flex flex-col justify-center items-center">
