@@ -8,12 +8,17 @@ import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
 import { removeCookie } from "../utils/cookie";
 import { useRecoilCallback, useRecoilValue } from "recoil";
 import { isSnackbarOpenAtom, showNavbarAtom, snackbarMessageAtom } from "../store/atoms";
+import { axiosWH } from "../utils/axios";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 
 const Navbar = () => {
   const navbar = useRecoilValue(showNavbarAtom);
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
+  const [error, handleError] = useState(undefined);
   const navigate = useNavigate();
+
+  useErrorCheck(error);
 
   const openSnackbar = useRecoilCallback(({ set }) => () => {
     set(isSnackbarOpenAtom, true);
@@ -26,14 +31,30 @@ const Navbar = () => {
   const handleLogoutButtonClick = () => {
     console.log("Logout");
     removeCookie(process.env.REACT_APP_USER_TOKEN);
+
+    setSnackbarText("로그아웃 되었습니다.");
+    openSnackbar();
+
     navigate("/login");
   };
 
   const handleRevokeAccessButtonClick = () => {
     console.log("Revoke Access");
-    // TODO: 회원 탈퇴 기능 추가
-    setSnackbarText("현재 회원 탈퇴 기능을 이용하실 수 없습니다.");
-    openSnackbar();
+  
+    axiosWH
+    .get("/login/withdraw")
+    .then((response) => {
+      console.log(response.data);
+      removeCookie(process.env.REACT_APP_USER_TOKEN);
+
+      setSnackbarText("회원 탈퇴 되었습니다.");
+      openSnackbar();
+
+      navigate(`/login}`);
+    })
+    .catch((error) => {
+      handleError(error);
+    });
   };
 
   return (
