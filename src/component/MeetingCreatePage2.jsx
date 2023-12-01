@@ -198,7 +198,7 @@ const MeetingCreatePage2 = () => {
             </div>
 
             <StepTitle
-              title="1. 미팅은 어느 요일에 진행되어야 하나요?"
+              title="2. 미팅은 어느 요일에 진행되어야 하나요?"
               className="left-0 top-0"
             />
             <DatePicker
@@ -211,7 +211,7 @@ const MeetingCreatePage2 = () => {
             <FollowLineArea />
 
             <div className="relative flex flex-col justify-center space-y-2 w-full h-fit py-2 px-2">
-              <StepTitle title="3.미팅은 어느 시간에 진행되어야 하나요?" />
+              <StepTitle title="3. 미팅은 어느 시간에 진행되어야 하나요?" />
               <div className="w-full flex flex-row h-[80px] space-x-2 justify-center">
                 <div className="flex flex-col justify-end space-y-2 h-full w-[50%]">
                   <StepTitle title="표준시(Time Zone)" />

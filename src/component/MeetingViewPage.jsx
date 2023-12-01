@@ -75,7 +75,7 @@ const MeetingViewPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingInfo(id, handleError).then((data) => {
-        setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
+        setMeetingInfo(data);
       });
       await getMeetingForm(id, handleError).then((data) => {
         setMeetingForm(data);
