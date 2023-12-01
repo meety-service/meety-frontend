@@ -138,10 +138,12 @@ export const closeVoteForm = async (id, handleError) => {
     });
 };
 
-export const getMeetingInfo = async (handleError) => {
+export const getMeetingInfo = async (id, handleError) => {
   return await axiosWH
     .get("/meetings")
-    .then((response) => response.data)
+    .then((response) =>
+      response.data.find((meeting) => meeting.id === parseInt(id))
+    )
     .catch(function (error) {
       handleError(error);
     });

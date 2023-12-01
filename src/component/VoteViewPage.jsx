@@ -38,7 +38,7 @@ const VoteViewPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       await getMeetingInfo(id, handleError).then((data) => {
-        setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
+        setMeetingInfo(data);
       });
       await getVoteChoices(id, handleError).then((data) => {
         setMembers(data.members);
