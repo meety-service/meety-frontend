@@ -35,6 +35,7 @@ export const getMeetingForm = async (id, handleError) => {
       const data = response.data;
       const timezone = await getTimezone(data.timezone_id, handleError);
       return {
+        title: data.name,
         // available_date를 기준으로 오름차순 정렬한다.
         meeting_dates: data.meeting_dates.sort((a, b) => {
           const dateA = new Date(a.available_date);
