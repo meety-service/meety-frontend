@@ -42,6 +42,7 @@ const MeetingFillPage2 = () => {
 
   const [meetingInfo, setMeetingInfo] = useState({});
 
+  const [title, setTitle] = useState("");
   const [meetingForm, setMeetingForm] = useState({
     meeting_dates: [],
     start_time: "00:00:00",
@@ -90,6 +91,7 @@ const MeetingFillPage2 = () => {
         setMeetingInfo(data.find((meeting) => meeting.id === parseInt(id)));
       });
       await getMeetingForm(id, handleError).then((data) => {
+        setTitle(data.title);
         setMeetingForm(data);
       });
       await getMySchedules(id, handleError, true).then((data) => {
@@ -139,8 +141,11 @@ const MeetingFillPage2 = () => {
               <LinkButton />
             </div>
             <div className="relative flex flex-col justify-center space-y-2 w-full h-full">
-              <div className="w-full pb-6">
+              <div className="w-full">
                 <PageTitle title="미팅 폼 작성하기" />
+              </div>
+              <div className="w-full pb-6 text-[15px] font-[700] text-meety-exp_text_gray">
+                (미팅 이름: {title})
               </div>
               <StepTitle
                 title="1. 다른 사람에게 보여질 이름을 적어주세요."
