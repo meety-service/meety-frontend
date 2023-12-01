@@ -1,38 +1,342 @@
-.App {
-  text-align: center;
+/* Common Styles */
+
+:root {
+  --vh: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.nav_top_padding {
+  padding-top: 60px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.nav_top_margin {
+  margin-top: 60px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.mobile_h_fit {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Paticular Styles */
+
+.nav-menu {
+  right: -100%;
+  /* transition: 300ms;*/
+}
+
+.nav-menu.active {
+  right: 0;
+  transition: 300ms;
+}
+
+.option-icon-rotate-180 {
+  transition: 300ms;
+  transform: rotate(-180deg);
+}
+
+.main-option-menu-slide-in {
+  margin-top: 0em;
+  transition-property: margin-top;
+  transition-duration: 300ms;
+}
+
+.react-datepicker {
+  width: 100%;
+  height: fit;
+  border: none !important;
+  border-radius: 15px 15px 5px 5px !important;
+  box-shadow: 3px 3px 3px #b5b5b5;
+}
+
+.react-datepicker__month-container {
+  width: 100%;
+  padding-bottom: 5px;
+  color: white;
+  border: 1.5px solid #E6E6E6;
+  border-radius: 16px 16px 5px 5px;
+}
+
+.react-datepicker .react-datepicker__navigation{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  margin-top:6px;
+  color: #FFFFFF;
+}
+
+.react-datepicker .react-datepicker__navigation .react-datepicker__navigation-icon {
+  position: relative;
+  margin-top:12px;
+}
+
+.react-datepicker__month-container .react-datepicker__month {
+  margin: 0px;
+}
+
+.react-datepicker__month-container .react-datepicker__month .react-datepicker__week {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+.react-datepicker__month-container .react-datepicker__month .react-datepicker__day {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  background: white;
+  height:30px;
+  border-radius: 3px;
+  font-size: 18px;
+  align-items: center;
+  font-weight: bold;
+  background: #E6E6E6;
+  box-shadow: 2px 3px 2px #d9d9d9;
+}
+
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
+  color:#FFFFFF;
+  font-size: 18px;
+}
+
+.react-datepicker__month-container .react-datepicker__header {
+  padding: 0px;
+  border-radius: 15px 15px 5px 5px !important;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__current-month{
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 44px;
+  border-radius: 15px 15px 0px 0px;
+  background: linear-gradient(45deg, #779CF9, #1550E8);
 }
 
-.App-link {
-  color: #61dafb;
+.react-datepicker__day {
+  /*달력에서 선택되지 않은 모든 날짜*/
+  background-color: #e6e6e6;
+  font-size: 11px;
+  width: 35px;
+  height: 25.5px;
 }
 
-@keyframes App-logo-spin {
+.react-datepicker__day--selected,
+.react-datepicker__day--highlighted {
+  /*달력에서 중복으로 선택된 날짜들*/
+  background-color: #4777f1 !important;
+  color: white !important;
+}
+
+
+
+.react-datepicker__month-container .react-datepicker__header {
+  background-color: #FFFFFF;
+  font-weight: bold;
+  width: 100%;
+  border-bottom: #FFFFFF;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name {
+  color: black;
+  width: 100%;
+  font-size: medium
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-names {
+  width: 100%;
+  display:flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(1):after {
+  content: "n";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(2):after {
+  content: "n";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(3):after {
+  content: "e";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(4):after {
+  content: "d";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(5):after {
+  content: "r";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(6):after {
+  content: "i";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:nth-child(7):after {
+  content: "t";
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:first-child {
+  color: red;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-name:last-child {
+  color: blue;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__current-month {
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.react-datepicker__day--sun {
+  color: red; /* 원하는 색상을 지정하세요 */
+}
+
+/* 토요일의 글자 색을 변경합니다 */
+.react-datepicker__day--sat {
+  color: blue; /* 원하는 색상을 지정하세요 */
+}
+
+
+
+.Dropdown-control {
+  width: 250px;
+  height: 30px;
+  font-size: 14px;
+}
+
+.Dropdown-arrow {
+  background-color: #cfcfcf;
+}
+
+.snackbar-fade-in {
+    opacity: 1;
+    transition: 0.2s;
+}
+
+.snackbar-hide {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.navbar-hide {
+  height: 0;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
+}
+
+@keyframes fadeInBg {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+.login-fade-in-1 {
+  animation: fadeIn 1s ease-in;
+}
+
+.login-fade-in-2 {
+  animation: fadeIn 1s ease-in;
+}
+
+.login-fade-in-bg {
+  animation: fadeInBg 1.5s ease-in;
+}
+
+.login-fade-in-btn {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.Dropdown-root .Dropdown-control {
+  width: 100%;
+  font-weight: bold;
+  color: #4D4D4D;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  box-shadow: 2px 3px 2px #d9d9d9;
+  border: 2px solid #CFCFCF;
+}
+
+.Dropdown-root.is-open .Dropdown-control {
+  width: 100%;
+  border-radius: 5px 5px 0px 0px;
+  border-top: 2px solid #CFCFCF;
+  border-left: 2px solid #CFCFCF;
+  border-right: 2px solid #CFCFCF;
+}
+
+.Dropdown-root .Dropdown-menu {
+  font-size: small;
+  font-weight: medium;
+  color: #4D4D4D;
+  width: 100%;
+  border-radius: 0px 0px 5px 5px;
+  border-left: 2px solid #CFCFCF;
+  border-right: 2px solid #CFCFCF;
+  border-bottom: 2px solid #CFCFCF;
+  background-color: #FAFAFA;
+}
+
+
+/* Webkit 엔진 브라우저 (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 10px; /* 스크롤바 너비 조정 */
+  height: 10px;
+  background-color: transparent;
+  margin: 10px;
+}
+
+/* Webkit 엔진 브라우저의 스크롤바 track(배경) 스타일링 */
+::-webkit-scrollbar-track {
+  background-color: #FAFAFA;
+}
+
+/* Webkit 엔진 브라우저의 스크롤바 thumb(스크롤바 바) 스타일링 */
+::-webkit-scrollbar-thumb {
+  background-color: #E1E1E9; /* 스크롤바 바 색상 설정 */
+  border-radius: 3px; /* 스크롤바 바 모서리 둥글게 만들기 */
+}
+
+/* 다른 브라우저 (Firefox, Edge 등) */
+/* Note: Mozilla Firefox는 -webkit- 접두사를 사용하지 않습니다. */
+/* Firefox 엔진 브라우저의 스크롤바 스타일링 */
+/* Firefox는 커스텀 스크롤바를 지원하지 않을 수 있으므로 브라우저 버전에 따라 동작이 다를 수 있습니다. */
+* {
+  scrollbar-width: thin; /* 스크롤바 너비 설정 (thin 또는 auto) */
+  scrollbar-color: #E1E1E9 transparent; /* 스크롤바 색상 설정 */
+}
+
+/* Microsoft Edge 엔진 브라우저의 스크롤바 스타일링 */
+/* Microsoft Edge는 -webkit- 접두사를 사용하지 않습니다. */
+/* Edge 엔진 브라우저의 스크롤바 track(배경) 스타일링 */
+/* Edge 엔진 브라우저의 스크롤바 thumb(스크롤바 바) 스타일링 */
+/* Edge 엔진 브라우저 역시 커스텀 스크롤바를 지원하지 않을 수 있으므로 브라우저 버전에 따라 동작이 다를 수 있습니다. */
+*::-ms-scrollbar {
+  width: 10px; /* 스크롤바 너비 설정 */
+  background-color: transparent; /* 배경 색상 설정 */
+}
+
+*::-ms-scrollbar-thumb {
+  background-color: #E1E1E9; /* 스크롤바 바 색상 설정 */
+  border-radius: 3px; /* 스크롤바 바 모서리 둥글게 만들기 */
 }
