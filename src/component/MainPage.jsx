@@ -6,29 +6,13 @@ import MainOptionButton from "./MainOptionButton";
 import { axiosWH } from "../utils/axios";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
+import StandbyView from "./StandbyView";
+import { getNavigationUrl } from "../utils/getNavigationUrl";
 
 const MainPage = () => {
   const navigate = useNavigate();
   const [meetingInfo, setMeetingInfo] = useState([]);
-  const [error, handleError] = useState(undefined);
-
-  // 사용자의 state 확인 후 어느 페이지로 이동할지 결정
-  const getNavigationUrl = useCallback((id, state) => {
-    switch (state) {
-      case 0: // 미팅 폼 작성 이전 -> 미팅 폼 작성 페이지
-        return `/meeting/fill/${id}`;
-      case 1: // 미팅 폼 작성 이후 -> 미팅 폼 작성 완료 페이지
-        return `/meeting/view/${id}`;
-      case 2: // 투표 참여 이전 -> 투표 폼 작성 페이지
-        return `/vote/fill/${id}`;
-      case 3: // 투표 참여 이전 -> 투표 폼 작성 완료 페이지
-        return `/vote/view/${id}`;
-      case 4: // 미팅 확정 -> 미팅 확정 페이지
-        return `/meeting/confirmed/${id}`;
-      default: // user_status 에러 -> 에러 페이지
-        return `/error`;
-    }
-  });
+  const [error, handleError] = useState(undefined);  
 
   // 미팅 삭제
   const onHandleDeleteButtonClick = async (info) => {
@@ -124,6 +108,7 @@ const MainPage = () => {
 
     window.scrollTo(0,0); // 페이지 최상단으로 이동
   }, []);
+
 
   return (
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-screen">

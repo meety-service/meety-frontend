@@ -1,5 +1,10 @@
 import axios from "axios";
 import { getCookie } from "./cookie";
+import { handleError } from "./handleError";
+import { useRecoilCallback } from "recoil";
+import { errorContentAtom, errorTitleAtom } from "../store/atoms";
+import { useErrorCheck } from "../hooks/useErrorCheck";
+import { useNavigate } from "react-router-dom";
 
 // axios에 해더 정보를 미리 저장
 export const axiosWH = axios.create({
@@ -129,7 +134,7 @@ export const editVotes = async (id, body, handleError) => {
 };
 
 export const closeVoteForm = async (id, handleError) => {
-  const data = {"close": 1}
+  const data = { "close": 1 }
   return await axiosWH
     .patch(`/meetings/${id}/vote`, data)
     .then((response) => response.data)
@@ -147,4 +152,24 @@ export const getMeetingInfo = async (id, handleError) => {
     .catch(function (error) {
       handleError(error);
     });
+};
+
+export const getUserState = async (id, handleError) => {
+  const data = { "user-state": 0 };
+
+  try {
+    const response = await axiosWH.post(`/meetings/${id}/user-state`, data);
+
+    if (response.data) {
+      const userState = response.data.latest_user_state;
+      console.log(`Updated state: ${userState}`);
+      return userState; // userState를 가져오는 비동기 작업이 완료되면 값을 반환한다.
+    } else {
+      console.log("갱신된 user_state 정보가 전달되지 않았습니다.");
+      return -1;
+    }
+  } catch (error) {
+    handleError(error);
+    return -1;
+  }
 };

@@ -6,6 +6,7 @@ import {
   SubMessage,
   TimeSlot,
   GradationButton,
+  StandbyView,
 } from "./";
 import useLoginCheck from "../hooks/useLoginCheck";
 import { useErrorCheck } from "../hooks/useErrorCheck";
@@ -15,33 +16,32 @@ import {
   submitSchedules,
   editSchedules,
   getMySchedules,
+  getUserState,
 } from "../utils/axios";
 import { timeToMinutes, calculateIntervals } from "./TimeSlot";
 import { useRecoilCallback } from "recoil";
-import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import {
+  errorContentAtom,
+  errorTitleAtom,
+  isSnackbarOpenAtom,
+  snackbarMessageAtom,
+} from "../store/atoms";
 import FollowLineArea from "./FollowLineArea";
 import LinkButton from "./LinkButton";
+import {
+  AFTER_MEETING_FILL,
+  BEFORE_MEETING_FILL,
+  INVALID_ACCESS,
+  INVALID_STATE,
+} from "../utils/constants";
+import { getNavigationUrl } from "../utils/getNavigationUrl";
 
 const MeetingFillPage2 = () => {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
-  useLoginCheck();
-
   const [error, handleError] = useState(undefined);
-  useErrorCheck(error);
-
-  const openSnackbar = useRecoilCallback(({ set }) => () => {
-    set(isSnackbarOpenAtom, true);
-  });
-
-  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
-    set(snackbarMessageAtom, message);
-  });
-
   const [meetingInfo, setMeetingInfo] = useState({});
-
   const [title, setTitle] = useState("");
   const [meetingForm, setMeetingForm] = useState({
     meeting_dates: [],
@@ -52,8 +52,28 @@ const MeetingFillPage2 = () => {
   const [nickname, setNickName] = useState("");
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [degrees, setDegrees] = useState([]);
-
   const [timeSlotSelected, setTimeSlotSelected] = useState([]);
+  const [isValidPage, setValidPage] = useState(false); // 사용자가 이동한 페이지가 유효한 페이지인지 확인
+
+  // 페이지 기본 체크 항목
+  useLoginCheck();
+  useErrorCheck(error);
+
+  const setErrorTitle = useRecoilCallback(({ set }) => (title) => {
+    set(errorTitleAtom, title);
+  });
+
+  const setErrorContent = useRecoilCallback(({ set }) => (content) => {
+    set(errorContentAtom, content);
+  });
+
+  const openSnackbar = useRecoilCallback(({ set }) => () => {
+    set(isSnackbarOpenAtom, true);
+  });
+
+  const setSnackbarText = useRecoilCallback(({ set }) => (message) => {
+    set(snackbarMessageAtom, message);
+  });
 
   const onSubmitButtonClick = async () => {
     const select_times = [];
@@ -86,6 +106,27 @@ const MeetingFillPage2 = () => {
   };
 
   useEffect(() => {
+    // State 검사
+    const checkState = async () => {
+      let userState = await getUserState(id, handleError); // 사용자의 최신 State를 가져온다.
+      console.log(`current page : meeting-fill / current state : ${userState}`);
+      if (userState == INVALID_STATE) {
+        setErrorTitle("원하시는 페이지를 찾을 수 없습니다.");
+        setErrorContent(
+          "찾으시려는 페이지의 주소가 잘못 입력되었거나, 페이지 주소의 변경 혹은 삭제로 인해 현재 사용하실 수 없습니다."
+        );
+        navigate("/error");
+      } else if (userState > AFTER_MEETING_FILL) {
+        // 투표 폼 생성 이후 시점에 다시 미팅 폼 작성 페이지로 이동한 경우
+        const url = getNavigationUrl(id, userState);
+        navigate(url);
+      } else {
+        setValidPage(true);
+      }
+    };
+    checkState();
+
+    // 데이터 fetch
     const fetchData = async () => {
       await getMeetingInfo(id, handleError).then((data) => {
         setMeetingInfo(data);
@@ -101,10 +142,12 @@ const MeetingFillPage2 = () => {
         }
       });
     };
-    fetchData();
-
-    window.scrollTo(0, 0); // 페이지 최상단으로 이동
-  }, []);
+    // 페이지가 유효할 때 데이터를 읽어온다.
+    if (isValidPage) {
+      fetchData();
+      window.scrollTo(0, 0); // 페이지 최상단으로 이동
+    }
+  }, [isValidPage]);
 
   useEffect(() => {
     const { meeting_dates, start_time, end_time } = meetingForm;
@@ -132,7 +175,9 @@ const MeetingFillPage2 = () => {
     setDegrees(newDegrees);
   }, [meetingForm, selectedTimes]);
 
-  return (
+  return !isValidPage ? (
+    <StandbyView />
+  ) : (
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-fit">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center mt-4 px-5 pb-10">
