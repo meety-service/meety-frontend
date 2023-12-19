@@ -16,13 +16,12 @@ import TimeSelectBar from "./TimeSelectBar";
 import { formatTime } from "./VoteCreatePage";
 import { useRecoilCallback } from "recoil";
 import { isSnackbarOpenAtom, snackbarMessageAtom } from "../store/atoms";
+import { HOURS_IN_DAY } from "../utils/constants";
+import { useErrorCheck } from "../hooks/useErrorCheck";
 
 const MeetingCreatePage2 = () => {
-  useLoginCheck();
 
   const navigate = useNavigate();
-
-  const hoursInDay = 24;
 
   const [title, setTitle] = useState("");
   const [error, handleError] = useState(undefined);
@@ -32,6 +31,9 @@ const MeetingCreatePage2 = () => {
   const [timeOptions, setTimeOptions] = useState([]);
   const [startTime, setStartTime] = useState("00:00:00");
   const [endTime, setEndTime] = useState("24:00:00");
+
+  useLoginCheck();
+  useErrorCheck(error);
 
   const openSnackbar = useRecoilCallback(({ set }) => () => {
     set(isSnackbarOpenAtom, true);
@@ -46,7 +48,7 @@ const MeetingCreatePage2 = () => {
   };
 
   const createTimeOptions = () => {
-    const time_options = Array(hoursInDay + 1)
+    const time_options = Array(HOURS_IN_DAY + 1)
       .fill()
       .map((_, i) => `${i.toString().padStart(2, "0")}:00`);
     setTimeOptions(time_options);
@@ -231,7 +233,7 @@ const MeetingCreatePage2 = () => {
                 <div className="flex flex-col justify-end h-full w-[50%]">
                   <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
                     <Dropdown
-                      options={timeOptions.slice(0, hoursInDay)}
+                      options={timeOptions.slice(0, HOURS_IN_DAY)}
                       onChange={handleStartTimeChange}
                       value={formatTime(startTime)}
                       placeholder="Select an option"
@@ -240,7 +242,7 @@ const MeetingCreatePage2 = () => {
                   </div>
                   <div className="w-full flex flex-row justify-end items-center space-x-2 mt-3">
                     <Dropdown
-                      options={timeOptions.slice(1, hoursInDay + 1)}
+                      options={timeOptions.slice(1, HOURS_IN_DAY + 1)}
                       onChange={handleEndTimeChange}
                       value={formatTime(endTime)}
                       placeholder="Select an option"

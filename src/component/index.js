@@ -23,3 +23,5 @@ export { default as IndexedItemHeader } from "./IndexedItemHeader";
 
 export { default as GradationButton } from "./GradationButton";
 export { default as MainOptionButton } from "./MainOptionButton";
+
+export { default as StandbyView } from "./StandbyView";
