@@ -35,7 +35,6 @@ import { getNavigationUrl } from "../utils/getNavigationUrl";
 
 const MeetingViewPage = () => {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   const [meetingForm, setMeetingForm] = useState({
@@ -44,20 +43,15 @@ const MeetingViewPage = () => {
     end_time: "00:00:00",
     timezone: "",
   });
-
   const [degrees, setDegrees] = useState([]);
-
   const [members, setMembers] = useState(0);
   const [schedules, setSchedules] = useState([]);
-
   const [isMinHourDropdownShown, setMinHourDropdownShown] = useState(false);
   const [selectedMinCellCount, setSelectedMinCellCount] = useState(1);
   const [sortedSchedules, setSortedSchedules] = useState([]);
-
   const [error, handleError] = useState(undefined);
   const [meetingInfo, setMeetingInfo] = useState({});
-
-  const [isValidPage, setValidPage] = useState(false); // 사용자가 이동한 페이지가 맞는 페이지인지 확인
+  const [isValidPage, setValidPage] = useState(false);  // 사용자가 이동한 페이지가 유효한 페이지인지 확인
 
   // 페이지 기본 체크 항목
   useLoginCheck();
@@ -129,7 +123,7 @@ const MeetingViewPage = () => {
       fetchData();
       window.scrollTo(0, 0); // 페이지 최상단으로 이동
     }
-  }, []);
+  }, [isValidPage]);
 
   useEffect(() => {
     const { meeting_dates, start_time, end_time } = meetingForm;

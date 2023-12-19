@@ -4,21 +4,51 @@ import GradationButton from "./GradationButton";
 import PageTitle from "./PageTitle";
 import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded";
 import useLoginCheck from "../hooks/useLoginCheck";
-import { axiosWH } from "../utils/axios";
+import { axiosWH, getUserState } from "../utils/axios";
 import { dateParser } from "../utils/dateParser";
 import { useErrorCheck } from "../hooks/useErrorCheck";
+import { INVALID_STATE, MEETING_CONFIRMED } from "../utils/constants";
+import { useRecoilCallback } from "recoil";
+import { errorContentAtom, errorTitleAtom } from "../store/atoms";
+import StandbyView from "./StandbyView";
 
 const MeetingConfirmedPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [confirmedMeetingInfo, setConfirmedMeetingInfo] = useState([]);
   const [error, handleError] = useState(undefined);
+  const [isValidPage, setValidPage] = useState(false); // 사용자가 이동한 페이지가 유효한 페이지인지 확인
 
+  // 페이지 기본 체크 항목
   useLoginCheck();
   useErrorCheck(error);
 
+  const setErrorTitle = useRecoilCallback(({ set }) => (title) => {
+    set(errorTitleAtom, title);
+  });
+
+  const setErrorContent = useRecoilCallback(({ set }) => (content) => {
+    set(errorContentAtom, content);
+  });
+
   // 서버에서 확정된 미팅 날짜 조회
   useEffect(() => {
+    // State 검사
+    const checkState = async () => {
+      let userState = await getUserState(id, handleError); // 사용자의 최신 State를 가져온다.
+      console.log(`current page : meeting-view / current state : ${userState}`);
+      if (userState != MEETING_CONFIRMED) {
+        setErrorTitle("원하시는 페이지를 찾을 수 없습니다.");
+        setErrorContent(
+          "찾으시려는 페이지의 주소가 잘못 입력되었거나, 페이지 주소의 변경 혹은 삭제로 인해 현재 사용하실 수 없습니다."
+        );
+        navigate("/error");
+      } else {
+        setValidPage(true);
+      }
+    };
+    checkState();
+
     const fetchData = async () => {
       await axiosWH
         .get(`/meetings/${id}/vote`)
@@ -43,12 +73,16 @@ const MeetingConfirmedPage = () => {
           handleError(error);
         });
     };
-    fetchData();
+    // 페이지가 유효할 때 데이터를 읽어온다.
+    if (isValidPage) {
+      fetchData();
+      window.scrollTo(0, 0); // 페이지 최상단으로 이동
+    }
+  }, [isValidPage]);
 
-    window.scrollTo(0,0); // 페이지 최상단으로 이동
-  }, []);
-
-  return (
+  return !isValidPage ? (
+    <StandbyView />
+  ) : (
     <div className="nav_top_padding mobile-h-fit bg-white w-full h-screen">
       <div className="relative flex flex-col justify-center items-center w-full h-full">
         <div className="relative w-full h-full flex flex-col justify-center items-center px-5 pb-10">
@@ -62,7 +96,7 @@ const MeetingConfirmedPage = () => {
                 <EventAvailableRoundedIcon style={{ fill: "#1B51DC" }} />
                 <p className="font-extrabold text-md">
                   미팅 날짜가 결정되었어요!
-                </p>  
+                </p>
               </div>
               <div className="space-y-4 w-full max h-fit py-2 px-5 mb-10 rounded-lg">
                 {/*개별 옵션*/}

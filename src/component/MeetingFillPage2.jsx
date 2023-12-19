@@ -53,8 +53,7 @@ const MeetingFillPage2 = () => {
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [degrees, setDegrees] = useState([]);
   const [timeSlotSelected, setTimeSlotSelected] = useState([]);
-
-  const [isValidPage, setValidPage] = useState(false); // 사용자가 이동한 페이지가 맞는 페이지인지 확인
+  const [isValidPage, setValidPage] = useState(false); // 사용자가 이동한 페이지가 유효한 페이지인지 확인
 
   // 페이지 기본 체크 항목
   useLoginCheck();
